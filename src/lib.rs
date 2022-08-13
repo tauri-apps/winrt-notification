@@ -266,8 +266,14 @@ impl Toast {
         self.audio = match src {
             None => "<audio silent=\"true\" />".to_owned(),
             Some(Sound::Default) => "".to_owned(),
-            Some(Sound::Loop(sound)) => format!(r#"<audio loop="true" src="ms-winsoundevent:Notification.Looping.{}" />"#, sound),
-            Some(Sound::Single(sound)) => format!(r#"<audio src="ms-winsoundevent:Notification.Looping.{}" />"#, sound),
+            Some(Sound::Loop(sound)) => format!(
+                r#"<audio loop="true" src="ms-winsoundevent:Notification.Looping.{}" />"#,
+                sound
+            ),
+            Some(Sound::Single(sound)) => format!(
+                r#"<audio src="ms-winsoundevent:Notification.Looping.{}" />"#,
+                sound
+            ),
             Some(sound) => format!(r#"<audio src="ms-winsoundevent:Notification.{}" />"#, sound),
         };
 
@@ -301,7 +307,14 @@ impl Toast {
                     </visual>
                     {}
                 </toast>",
-            self.duration, self.scenario, template_binding, self.images, self.title, self.line1, self.line2, self.audio,
+            self.duration,
+            self.scenario,
+            template_binding,
+            self.images,
+            self.title,
+            self.line1,
+            self.line2,
+            self.audio,
         )))?;
 
         // Create the toast
@@ -312,7 +325,8 @@ impl Toast {
     pub fn show(&self) -> windows::core::Result<()> {
         let toast_template = self.create_template()?;
 
-        let toast_notifier = ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(&self.app_id))?;
+        let toast_notifier =
+            ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(&self.app_id))?;
 
         // Show the toast.
         let result = toast_notifier.Show(&toast_template);
@@ -330,7 +344,10 @@ mod tests {
     fn simple_toast() {
         let toast = Toast::new(Toast::POWERSHELL_APP_ID);
         toast
-            .hero(&Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/flower.jpeg"), "flower")
+            .hero(
+                &Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/flower.jpeg"),
+                "flower",
+            )
             .icon(
                 &Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/chick.jpeg"),
                 IconCrop::Circular,
