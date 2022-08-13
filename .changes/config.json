@@ -75,7 +75,7 @@
         }
     },
     "packages": {
-        "winrt-notification": {
+        "tauri-winrt-notification": {
             "path": ".",
             "manager": "rust"
         }
