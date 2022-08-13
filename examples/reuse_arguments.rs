@@ -1,9 +1,4 @@
-extern crate winrt_notification;
-use winrt_notification::{
-    Duration,
-    Sound,
-    Toast,
-};
+use tauri_winrt_notification::{Duration, Sound, Toast};
 
 fn main() {
     let duration = Duration::Short;
