@@ -1,5 +1,5 @@
 [package]
-name = "winrt-notification"
+name = "tauri-winrt-notification"
 version = "0.5.1"
 authors = ["allenbenz"]
 keywords = ["notification", "windows", "toast", "notify"]
