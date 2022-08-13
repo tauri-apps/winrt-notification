@@ -9,7 +9,7 @@ documentation = "https://allenbenz.github.io/winrt-notification/0_5_0/winrt_noti
 repository = "https://github.com/allenbenz/winrt-notification"
 license = "MIT"
 edition = '2021'
-rust-version = "1.59"
+rust-version = "1.56"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"
@@ -19,7 +19,7 @@ xml-rs = "0.8.4"
 strum = { version = "0.22.0", features = ["derive"] }
 
 [target.'cfg(target_env = "msvc")'.dependencies.windows]
-version = "0.39.0"
+version = "0.34.0"
 features = [
     "Win32_Foundation",
     "Foundation_Collections",
@@ -29,7 +29,7 @@ features = [
 ]
 
 [target.'cfg(target_env = "gnu")'.dependencies.windows]
-version = "0.39.0"
+version = "0.34.0"
 features = [
     "Win32_Foundation",
     "Foundation_Collections",
