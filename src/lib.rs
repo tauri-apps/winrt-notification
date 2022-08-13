@@ -286,11 +286,9 @@ impl Toast {
 
         let template_binding = if windows_check::is_newer_than_windows81() {
             "ToastGeneric"
-        } else
-        //win8 or win81
-        {
+        } else {
             // Need to do this or an empty placeholder will be shown if no image is set
-            if self.images == "" {
+            if self.images.is_empty() {
                 "ToastText04"
             } else {
                 "ToastImageAndText04"
