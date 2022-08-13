@@ -9,6 +9,7 @@ documentation = "https://allenbenz.github.io/winrt-notification/0_5_0/winrt_noti
 repository = "https://github.com/allenbenz/winrt-notification"
 license = "MIT"
 edition = '2021'
+rust-version = "1.59"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"
