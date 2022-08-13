@@ -18,8 +18,10 @@ mod internal {
     #[allow(non_snake_case)]
     pub unsafe fn RtlGetNtVersionNumbers(major: *mut u32, minor: *mut u32, build: *mut u32) {
         if CacheRtlGetNtVersionNumbers.is_none() {
-            CacheRtlGetNtVersionNumbers =
-                GetProcAddress(GetModuleHandleA("ntdll.dll"), "RtlGetNtVersionNumbers");
+            CacheRtlGetNtVersionNumbers = GetProcAddress(
+                GetModuleHandleA(windows::s!("ntdll.dll")).expect("Failed to get hinstance "),
+                windows::s!("RtlGetNtVersionNumbers"),
+            );
         }
 
         if let Some(RtlGetNtVersionNumbers_FUNCTION) = CacheRtlGetNtVersionNumbers {
