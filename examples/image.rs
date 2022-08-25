@@ -1,3 +1,8 @@
+// Copyright 2017-2022 allenbenz <allenbenz@users.noreply.github.com>
+// Copyright 2022-2022 Tauri Programme within The Commons Conservancy
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
+
 use std::path::Path;
 use tauri_winrt_notification::{IconCrop, Toast};
 

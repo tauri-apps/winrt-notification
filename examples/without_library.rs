@@ -1,5 +1,9 @@
-// How to create a toast without using this library
+// Copyright 2017-2022 allenbenz <allenbenz@users.noreply.github.com>
+// Copyright 2022-2022 Tauri Programme within The Commons Conservancy
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 
+// How to create a toast without using this library
 use std::path::Path;
 
 // You need to have the windows crate in your Cargo.toml
