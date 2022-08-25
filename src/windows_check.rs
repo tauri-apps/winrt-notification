@@ -10,7 +10,11 @@ mod internal {
 // but we know it's in ntdll which will always be present at runtime.
 #[cfg(target_env = "gnu")]
 mod internal {
-    use windows::Win32::System::LibraryLoader::{GetModuleHandleA, GetProcAddress};
+    use windows::{
+        core::PCSTR,
+        s,
+        Win32::System::LibraryLoader::{GetModuleHandleA, GetProcAddress},
+    };
 
     #[allow(non_upper_case_globals)]
     static mut CacheRtlGetNtVersionNumbers: Option<unsafe extern "system" fn() -> isize> = None;
@@ -18,8 +22,10 @@ mod internal {
     #[allow(non_snake_case)]
     pub unsafe fn RtlGetNtVersionNumbers(major: *mut u32, minor: *mut u32, build: *mut u32) {
         if CacheRtlGetNtVersionNumbers.is_none() {
-            CacheRtlGetNtVersionNumbers =
-                GetProcAddress(GetModuleHandleA("ntdll.dll"), "RtlGetNtVersionNumbers");
+            CacheRtlGetNtVersionNumbers = GetProcAddress(
+                GetModuleHandleA(PCSTR::from_raw(s!("ntdll.dll").as_ptr())).unwrap_or_default(),
+                PCSTR::from_raw(s!("RtlGetNtVersionNumbers").as_ptr()),
+            );
         }
 
         if let Some(RtlGetNtVersionNumbers_FUNCTION) = CacheRtlGetNtVersionNumbers {

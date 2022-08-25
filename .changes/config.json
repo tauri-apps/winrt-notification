@@ -1,5 +1,5 @@
 {
-    "gitSiteUrl": "https://github.com/tauri-apps/winrt-notifications/",
+    "gitSiteUrl": "https://github.com/tauri-apps/winrt-notification/",
     "timeout": 3600000,
     "additionalBumpTypes": [
         "housekeeping"

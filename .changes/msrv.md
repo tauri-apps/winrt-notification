@@ -2,6 +2,6 @@
 "tauri-winrt-notification": "minor"
 ---
 
-Set MSRV to 1.56
+Set MSRV to 1.59
 
 
