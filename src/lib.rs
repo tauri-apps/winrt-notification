@@ -1,3 +1,8 @@
+// Copyright 2017-2022 allenbenz <allenbenz@users.noreply.github.com>
+// Copyright 2022-2022 Tauri Programme within The Commons Conservancy
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
+
 //! An incomplete wrapper over the WinRT toast api
 //!
 //! Tested in Windows 10 and 8.1. Untested in Windows 8, might work.
