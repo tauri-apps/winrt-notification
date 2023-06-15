@@ -20,7 +20,6 @@
 //!
 //! * Windows 8.1 only supports a single image, the last image (icon, hero, image) will be the one on the toast
 
-use strum::{Display, EnumString};
 /// for xml schema details check out:
 ///
 /// * https://docs.microsoft.com/en-us/uwp/schemas/tiles/toastschema/root-elements
@@ -35,7 +34,9 @@ use strum::{Display, EnumString};
 /// For actions look at https://docs.microsoft.com/en-us/dotnet/api/microsoft.toolkit.uwp.notifications.toastactionscustom?view=win-comm-toolkit-dotnet-7.0
 use windows::{Data::Xml::Dom::XmlDocument, UI::Notifications::ToastNotificationManager};
 
+use std::fmt::Display;
 use std::path::Path;
+use std::str::FromStr;
 
 mod windows_check;
 
@@ -62,7 +63,7 @@ pub enum Duration {
     Long,
 }
 
-#[derive(Display, Debug, EnumString, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub enum Sound {
     Default,
     IM,
@@ -70,16 +71,54 @@ pub enum Sound {
     Reminder,
     SMS,
     /// Play the loopable sound only once
-    #[strum(disabled)]
     Single(LoopableSound),
     /// Loop the loopable sound for the entire duration of the toast
-    #[strum(disabled)]
     Loop(LoopableSound),
+}
+
+impl TryFrom<&str> for Sound {
+    type Error = SoundParsingError;
+
+    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
+        Self::from_str(value)
+    }
+}
+
+impl FromStr for Sound {
+    type Err = SoundParsingError;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        Ok(match s {
+            "Default" => Sound::Default,
+            "IM" => Sound::IM,
+            "Mail" => Sound::Mail,
+            "Reminder" => Sound::Reminder,
+            "SMS" => Sound::SMS,
+            _ => Sound::Single(LoopableSound::from_str(s)?),
+        })
+    }
+}
+
+impl Display for Sound {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match &self {
+                Sound::Default => "Default",
+                Sound::IM => "IM",
+                Sound::Mail => "Mail",
+                Sound::Reminder => "Reminder",
+                Sound::SMS => "SMS",
+                Sound::Single(s) | Sound::Loop(s) => return write!(f, "{s}"),
+            }
+        )
+    }
 }
 
 /// Sounds suitable for Looping
 #[allow(dead_code)]
-#[derive(Display, Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub enum LoopableSound {
     Alarm,
     Alarm2,
@@ -101,6 +140,84 @@ pub enum LoopableSound {
     Call8,
     Call9,
     Call10,
+}
+
+#[derive(Debug)]
+pub struct SoundParsingError;
+impl Display for SoundParsingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "couldn't parse string as a valid sound")
+    }
+}
+impl std::error::Error for SoundParsingError {}
+
+impl TryFrom<&str> for LoopableSound {
+    type Error = SoundParsingError;
+
+    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
+        Self::from_str(value)
+    }
+}
+
+impl FromStr for LoopableSound {
+    type Err = SoundParsingError;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        Ok(match s {
+            "Alarm" => LoopableSound::Alarm,
+            "Alarm2" => LoopableSound::Alarm2,
+            "Alarm3" => LoopableSound::Alarm3,
+            "Alarm4" => LoopableSound::Alarm4,
+            "Alarm5" => LoopableSound::Alarm5,
+            "Alarm6" => LoopableSound::Alarm6,
+            "Alarm7" => LoopableSound::Alarm7,
+            "Alarm8" => LoopableSound::Alarm8,
+            "Alarm9" => LoopableSound::Alarm9,
+            "Alarm10" => LoopableSound::Alarm10,
+            "Call" => LoopableSound::Call,
+            "Call2" => LoopableSound::Call2,
+            "Call3" => LoopableSound::Call3,
+            "Call4" => LoopableSound::Call4,
+            "Call5" => LoopableSound::Call5,
+            "Call6" => LoopableSound::Call6,
+            "Call7" => LoopableSound::Call7,
+            "Call8" => LoopableSound::Call8,
+            "Call9" => LoopableSound::Call9,
+            "Call10" => LoopableSound::Call10,
+            _ => return Err(SoundParsingError),
+        })
+    }
+}
+
+impl Display for LoopableSound {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                LoopableSound::Alarm => "Alarm",
+                LoopableSound::Alarm2 => "Alarm2",
+                LoopableSound::Alarm3 => "Alarm3",
+                LoopableSound::Alarm4 => "Alarm4",
+                LoopableSound::Alarm5 => "Alarm5",
+                LoopableSound::Alarm6 => "Alarm6",
+                LoopableSound::Alarm7 => "Alarm7",
+                LoopableSound::Alarm8 => "Alarm8",
+                LoopableSound::Alarm9 => "Alarm9",
+                LoopableSound::Alarm10 => "Alarm10",
+                LoopableSound::Call => "Call",
+                LoopableSound::Call2 => "Call2",
+                LoopableSound::Call3 => "Call3",
+                LoopableSound::Call4 => "Call4",
+                LoopableSound::Call5 => "Call5",
+                LoopableSound::Call6 => "Call6",
+                LoopableSound::Call7 => "Call7",
+                LoopableSound::Call8 => "Call8",
+                LoopableSound::Call9 => "Call9",
+                LoopableSound::Call10 => "Call10",
+            }
+        )
+    }
 }
 
 #[allow(dead_code)]
