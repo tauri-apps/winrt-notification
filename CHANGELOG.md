@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.1.1]
+
+- [`2387db8`](https://github.com/tauri-apps/winrt-notification/commit/2387db87b0620d7cb6341d931c22454058b7b2da)([#7](https://github.com/tauri-apps/winrt-notification/pull/7)) Fix parsing loopable sounds from string as well.
+
 ## \[0.1.0]
 
 - Set MSRV to 1.59
