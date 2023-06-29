@@ -408,11 +408,11 @@ impl Toast {
 
     // HACK: f is static so that we know the function is valid to call.
     //       this would be nice to remove at some point
-    pub fn on_activated(
+    pub fn on_activated<F: FnOnce() -> Result<()> + Send + 'static>(
         mut self,
-        f: impl FnMut(&Option<ToastNotification>, &Option<IInspectable>) -> Result<()> + Send + 'static,
+        f: F,
     ) -> Self {
-        self.on_activated = Some(TypedEventHandler::new(f));
+        self.on_activated = Some(f);
         self
     }
 
