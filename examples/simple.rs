@@ -6,7 +6,6 @@
 use std::{process::exit, thread::sleep, time::Duration as StdDuration};
 
 use tauri_winrt_notification::{Duration, Sound, Toast, ToastNotification};
-use windows::core::IInspectable;
 
 fn main() {
     Toast::new(Toast::POWERSHELL_APP_ID)
@@ -22,12 +21,7 @@ fn main() {
     println!("The notification wasn't clicked!");
 }
 
-fn handle_notification_click(
-    toast: &Option<ToastNotification>,
-    object: &Option<IInspectable>,
-) -> windows::core::Result<()> {
+fn handle_notification_click() -> windows::core::Result<()> {
     println!("You've clicked me!");
-    dbg!(toast);
-    dbg!(object);
     exit(0);
 }
