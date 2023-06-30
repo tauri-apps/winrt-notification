@@ -410,9 +410,9 @@ impl Toast {
     //       this would be nice to remove at some point
     pub fn on_activated<F: FnMut() -> Result<()> + Send + 'static>(
         mut self,
-        f: F,
+        mut f: F,
     ) -> Self {
-        self.on_activated = Some(TypedEventHandler::new(|_, _| f()));
+        self.on_activated = Some(TypedEventHandler::new(move |_, _| f()));
         self
     }
 
