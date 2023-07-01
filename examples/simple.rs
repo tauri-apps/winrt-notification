@@ -5,7 +5,7 @@
 
 use std::{process::exit, thread::sleep, time::Duration as StdDuration};
 
-use tauri_winrt_notification::{Duration, Sound, Toast, ToastNotification};
+use tauri_winrt_notification::{Duration, Sound, Toast};
 
 fn main() {
     Toast::new(Toast::POWERSHELL_APP_ID)
