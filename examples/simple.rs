@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
+use std::{process::exit, thread::sleep, time::Duration as StdDuration};
+
 use tauri_winrt_notification::{Duration, Sound, Toast};
 
 fn main() {
@@ -11,6 +13,15 @@ fn main() {
         .text1("(╯°□°）╯︵ ┻━┻")
         .sound(Some(Sound::SMS))
         .duration(Duration::Short)
+        .on_activated(handle_notification_click)
         .show()
         .expect("unable to send notification");
+    println!("Waiting 10 seconds for the notification to be clicked...");
+    sleep(StdDuration::from_secs(10));
+    println!("The notification wasn't clicked!");
+}
+
+fn handle_notification_click() -> windows::core::Result<()> {
+    println!("You've clicked me!");
+    exit(0);
 }

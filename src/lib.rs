@@ -32,7 +32,10 @@
 /// https://softwareengineering.stackexchange.com/questions/222339/using-the-system-tray-notification-area-app-in-windows-7
 
 /// For actions look at https://docs.microsoft.com/en-us/dotnet/api/microsoft.toolkit.uwp.notifications.toastactionscustom?view=win-comm-toolkit-dotnet-7.0
-use windows::{Data::Xml::Dom::XmlDocument, UI::Notifications::ToastNotificationManager};
+use windows::{
+    core::IInspectable, Data::Xml::Dom::XmlDocument, Foundation::TypedEventHandler,
+    UI::Notifications::ToastNotificationManager,
+};
 
 use std::fmt::Display;
 use std::path::Path;
@@ -52,6 +55,7 @@ pub struct Toast {
     audio: String,
     app_id: String,
     scenario: String,
+    on_activated: Option<TypedEventHandler<ToastNotification, IInspectable>>,
 }
 
 #[derive(Clone, Copy)]
@@ -264,6 +268,7 @@ impl Toast {
             audio: String::new(),
             app_id: app_id.to_string(),
             scenario: String::new(),
+            on_activated: None,
         }
     }
 
@@ -401,6 +406,13 @@ impl Toast {
         self
     }
 
+    // HACK: f is static so that we know the function is valid to call.
+    //       this would be nice to remove at some point
+    pub fn on_activated<F: FnMut() -> Result<()> + Send + 'static>(mut self, mut f: F) -> Self {
+        self.on_activated = Some(TypedEventHandler::new(move |_, _| f()));
+        self
+    }
+
     fn create_template(&self) -> windows::core::Result<ToastNotification> {
         //using this to get an instance of XmlDocument
         let toast_xml = XmlDocument::new()?;
@@ -443,6 +455,9 @@ impl Toast {
     /// Display the toast on the screen
     pub fn show(&self) -> windows::core::Result<()> {
         let toast_template = self.create_template()?;
+        if let Some(handler) = &self.on_activated {
+            toast_template.Activated(handler)?;
+        }
 
         let toast_notifier =
             ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(&self.app_id))?;
