@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.1.2]
+
+- [`7c19ca4`](https://github.com/tauri-apps/winrt-notification/commit/7c19ca45410e5d6575f00137dcdb49a903346b4b)([#9](https://github.com/tauri-apps/winrt-notification/pull/9)) Add `Toast::on_activated` to add a handler to run when the toast is activated.
+
 ## \[0.1.1]
 
 - [`2387db8`](https://github.com/tauri-apps/winrt-notification/commit/2387db87b0620d7cb6341d931c22454058b7b2da)([#7](https://github.com/tauri-apps/winrt-notification/pull/7)) Fix parsing loopable sounds from string as well.
