@@ -18,7 +18,7 @@ rust-version = "1.59"
 default-target = "x86_64-pc-windows-msvc"
 
 [dependencies]
-quick-xml = "0.23.0"
+quick-xml = "0.30.0"
 
 [target."cfg(target_env = \"msvc\")".dependencies.windows]
 version = "0.39.0"
