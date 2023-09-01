@@ -21,7 +21,7 @@ default-target = "x86_64-pc-windows-msvc"
 quick-xml = "0.23.0"
 
 [target."cfg(target_env = \"msvc\")".dependencies.windows]
-version = "0.39.0"
+version = "0.51.1"
 features = [
   "Win32_Foundation",
   "Foundation_Collections",
@@ -31,7 +31,7 @@ features = [
 ]
 
 [target."cfg(target_env = \"gnu\")".dependencies.windows]
-version = "0.39.0"
+version = "0.51.1"
 features = [
   "Win32_Foundation",
   "Foundation_Collections",
