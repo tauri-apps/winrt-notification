@@ -16,8 +16,7 @@ mod internal {
 #[cfg(target_env = "gnu")]
 mod internal {
     use windows::{
-        core::PCSTR,
-        s,
+        core::{s, PCSTR},
         Win32::System::LibraryLoader::{GetModuleHandleA, GetProcAddress},
     };
 
