@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.1.3]
+
+- [`7aa2785`](https://github.com/tauri-apps/winrt-notification/commit/7aa27850c28470006cf75357d9de5474a0139e50) Update `windows` crate to `0.51`
+
 ## \[0.1.2]
 
 - [`7c19ca4`](https://github.com/tauri-apps/winrt-notification/commit/7c19ca45410e5d6575f00137dcdb49a903346b4b)([#9](https://github.com/tauri-apps/winrt-notification/pull/9)) Add `Toast::on_activated` to add a handler to run when the toast is activated.
