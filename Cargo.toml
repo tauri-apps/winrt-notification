@@ -18,10 +18,10 @@ rust-version = "1.59"
 default-target = "x86_64-pc-windows-msvc"
 
 [dependencies]
-quick-xml = "0.23.0"
+quick-xml = "0.30.0"
 
 [target."cfg(target_env = \"msvc\")".dependencies.windows]
-version = "0.48.0"
+version = "0.51"
 features = [
   "Win32_Foundation",
   "Foundation_Collections",
@@ -31,7 +31,7 @@ features = [
 ]
 
 [target."cfg(target_env = \"gnu\")".dependencies.windows]
-version = "0.48.0"
+version = "0.51"
 features = [
   "Win32_Foundation",
   "Foundation_Collections",

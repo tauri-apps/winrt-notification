@@ -277,7 +277,10 @@ impl Toast {
     /// Will be white.
     /// Supports Unicode ✓
     pub fn title(mut self, content: &str) -> Toast {
-        self.title = format!(r#"<text id="1">{}</text>"#, &escape(content));
+        self.title = format!(
+            r#"<text id="1">{}</text>"#,
+            &quick_xml::escape::escape(content)
+        );
         self
     }
 
@@ -286,7 +289,10 @@ impl Toast {
     /// Will be grey.
     /// Supports Unicode ✓
     pub fn text1(mut self, content: &str) -> Toast {
-        self.line1 = format!(r#"<text id="2">{}</text>"#, &escape(content));
+        self.line1 = format!(
+            r#"<text id="2">{}</text>"#,
+            &quick_xml::escape::escape(content)
+        );
         self
     }
 
@@ -295,7 +301,10 @@ impl Toast {
     /// Will be grey.
     /// Supports Unicode ✓
     pub fn text2(mut self, content: &str) -> Toast {
-        self.line2 = format!(r#"<text id="3">{}</text>"#, &escape(content));
+        self.line2 = format!(
+            r#"<text id="3">{}</text>"#,
+            &quick_xml::escape::escape(content)
+        );
         self
     }
 
@@ -339,8 +348,8 @@ impl Toast {
                 r#"{}<image placement="appLogoOverride" {} src="file:///{}" alt="{}" />"#,
                 self.images,
                 crop_type_attr,
-                escape(&source.display().to_string()),
-                escape(alt_text)
+                quick_xml::escape::escape(&source.display().to_string()),
+                quick_xml::escape::escape(alt_text)
             );
             self
         } else {
@@ -357,8 +366,8 @@ impl Toast {
             self.images = format!(
                 r#"{}<image placement="Hero" src="file:///{}" alt="{}" />"#,
                 self.images,
-                escape(&source.display().to_string()),
-                escape(alt_text)
+                quick_xml::escape::escape(&source.display().to_string()),
+                quick_xml::escape::escape(alt_text)
             );
             self
         } else {
@@ -379,8 +388,8 @@ impl Toast {
         self.images = format!(
             r#"{}<image id="1" src="file:///{}" alt="{}" />"#,
             self.images,
-            escape(&source.display().to_string()),
-            escape(alt_text)
+            quick_xml::escape::escape(&source.display().to_string()),
+            quick_xml::escape::escape(alt_text)
         );
         self
     }
@@ -467,11 +476,6 @@ impl Toast {
         std::thread::sleep(std::time::Duration::from_millis(10));
         result
     }
-}
-
-fn escape(string: &str) -> String {
-    let escaped = quick_xml::escape::escape(string.as_bytes()).to_vec();
-    String::from_utf8(escaped).unwrap()
 }
 
 #[cfg(test)]

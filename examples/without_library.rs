@@ -17,11 +17,6 @@ use windows::{
 
 pub use windows::core::{Error, HSTRING};
 
-fn escape(string: &str) -> String {
-    let escaped = quick_xml::escape::escape(string.as_bytes()).to_vec();
-    String::from_utf8(escaped).unwrap()
-}
-
 fn main() {
     do_toast().expect("not sure if this is actually failable");
     // this is a hack to workaround toasts not showing up if the application closes too quickly
@@ -47,7 +42,7 @@ fn do_toast() -> windows::core::Result<()> {
                 <audio src="ms-winsoundevent:Notification.SMS" />
                 <!-- <audio silent="true" /> -->
             </toast>"#,
-            escape(&Path::new("C:\\path_to_image_in_toast.jpg").display().to_string()),
+            quick_xml::escape::escape(&Path::new("C:\\path_to_image_in_toast.jpg").display().to_string()),
     ))).expect("the xml is malformed");
 
     // Create the toast and attach event listeners
