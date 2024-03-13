@@ -38,8 +38,9 @@ jobs:
     runs-on: ${{ matrix.platform.os }}
     steps:
     - uses: actions/checkout@v4
-    - uses: dtolnay/rust-toolchain@${{ matrix.rust_version }}
+    - uses: dtolnay/rust-toolchain@master
       with:
+        toolchain: ${{ matrix.rust_version }}
         targets: ${{ matrix.platform.target }}
         components: clippy
 
