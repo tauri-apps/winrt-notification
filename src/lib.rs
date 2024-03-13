@@ -476,6 +476,11 @@ impl Toast {
     }
 }
 
+fn is_newer_than_windows81() -> bool {
+    let os = windows_version::OsVersion::current();
+    os.major > 6
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -504,9 +509,4 @@ mod tests {
             // silently consume errors
             .expect("notification failed");
     }
-}
-
-fn is_newer_than_windows81() -> bool {
-    let os = windows_version::OsVersion::current();
-    os.major > 6
 }
