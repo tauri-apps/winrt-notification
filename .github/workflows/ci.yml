@@ -58,7 +58,7 @@ jobs:
             linker = `"C:\\msys64\\mingw32\\bin\\i686-w64-mingw32-gcc.exe`"
             ar = `"C:\\msys64\\mingw32\\bin\\ar.exe`"
         "@
-      if: contains(matrix.target, 'windows-gnu')
+      if: matrix.platform == 'windows-latest' && contains(matrix.platform.target, 'gnu')
 
     - name: Check documentation
       run: cargo doc --no-deps --target ${{ matrix.platform.target }} --document-private-items
