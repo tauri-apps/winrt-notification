@@ -1,6 +1,6 @@
 [package]
 name = "tauri-winrt-notification"
-version = "0.1.3"
+version = "0.2.0"
 authors = [
   "allenbenz",
   "Tauri Programme within The Commons Conservancy"
@@ -12,7 +12,7 @@ documentation = "https://docs.rs/tauri-winrt-notification/"
 repository = "https://github.com/tauri-apps/winrt-notification"
 license = "MIT OR Apache-2.0"
 edition = "2021"
-rust-version = "1.59"
+rust-version = "1.62"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"
@@ -31,7 +31,7 @@ features = [
 ]
 
 [target."cfg(target_env = \"gnu\")".dependencies.windows]
-version = "0.51"
+version = "0.54"
 features = [
   "Win32_Foundation",
   "Foundation_Collections",
