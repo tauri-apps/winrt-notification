@@ -1,5 +1,10 @@
 # Changelog
 
+## \[0.2.0]
+
+- [`1427bbf`](https://github.com/tauri-apps/winrt-notification/commit/1427bbfadc0152d2d42b25d6385f43ce551e3aeb)([#18](https://github.com/tauri-apps/winrt-notification/pull/18)) Update MSRV to `1.62`
+- [`1427bbf`](https://github.com/tauri-apps/winrt-notification/commit/1427bbfadc0152d2d42b25d6385f43ce551e3aeb)([#18](https://github.com/tauri-apps/winrt-notification/pull/18)) Update `windows` crate to `0.54`
+
 ## \[0.1.3]
 
 - [`7aa2785`](https://github.com/tauri-apps/winrt-notification/commit/7aa27850c28470006cf75357d9de5474a0139e50) Update `windows` crate to `0.51`

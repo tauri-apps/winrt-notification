@@ -1,6 +1,6 @@
 [package]
 name = "tauri-winrt-notification"
-version = "0.1.3"
+version = "0.2.0"
 authors = [
   "allenbenz",
   "Tauri Programme within The Commons Conservancy"
@@ -21,9 +21,9 @@ default-target = "x86_64-pc-windows-msvc"
 quick-xml = "0.30.0"
 windows-version = "0.1.0"
 
-[dependencies.windows]
-version = "0.54"
-features = [
+  [dependencies.windows]
+  version = "0.54"
+  features = [
   "Win32_Foundation",
   "Foundation_Collections",
   "Win32_System_SystemInformation",
