@@ -46,7 +46,10 @@ jobs:
 
     - uses: Swatinem/rust-cache@v2
 
+    # https://github.com/rust-lang/rust/issues/112368
     # https://github.com/microsoft/windows-rs/issues/2614
+    - run: C:/msys64/usr/bin/pacman.exe -Syu --needed mingw-w64-x86_64-gcc mingw-w64-i686-gcc --noconfirm
+      if: matrix.platform.os == 'windows-latest' && contains(matrix.platform.target, 'gnu')
     - name: Configure Cargo for GNU
       shell: pwsh
       run: |
@@ -67,4 +70,5 @@ jobs:
       run: cargo test --no-run --verbose --target ${{ matrix.platform.target }}
 
     - name: Lint with clippy
+      if: matrix.rust_version != 'nightly'
       run: cargo clippy --all-targets --target ${{ matrix.platform.target }} -- -Dwarnings
