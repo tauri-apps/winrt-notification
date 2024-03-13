@@ -41,8 +41,6 @@ use std::fmt::Display;
 use std::path::Path;
 use std::str::FromStr;
 
-mod windows_check;
-
 pub use windows::core::{Error, Result, HSTRING};
 pub use windows::UI::Notifications::ToastNotification;
 
@@ -338,7 +336,7 @@ impl Toast {
     /// The default is determined by your app id.
     /// If you are using the powershell workaround, it will be the powershell icon
     pub fn icon(mut self, source: &Path, crop: IconCrop, alt_text: &str) -> Toast {
-        if windows_check::is_newer_than_windows81() {
+        if is_newer_than_windows81() {
             let crop_type_attr = match crop {
                 IconCrop::Square => "".to_string(),
                 IconCrop::Circular => "hint-crop=\"circle\"".to_string(),
@@ -362,7 +360,7 @@ impl Toast {
     ///
     /// This will be above the toast text and the icon.
     pub fn hero(mut self, source: &Path, alt_text: &str) -> Toast {
-        if windows_check::is_newer_than_windows81() {
+        if is_newer_than_windows81() {
             self.images = format!(
                 r#"{}<image placement="Hero" src="file:///{}" alt="{}" />"#,
                 self.images,
@@ -381,7 +379,7 @@ impl Toast {
     /// May be done many times.
     /// Will appear below text.
     pub fn image(mut self, source: &Path, alt_text: &str) -> Toast {
-        if !windows_check::is_newer_than_windows81() {
+        if !is_newer_than_windows81() {
             // win81 cannot have more than 1 image and shows nothing if there is more than that
             self.images = "".to_owned();
         }
@@ -426,7 +424,7 @@ impl Toast {
         //using this to get an instance of XmlDocument
         let toast_xml = XmlDocument::new()?;
 
-        let template_binding = if windows_check::is_newer_than_windows81() {
+        let template_binding = if is_newer_than_windows81() {
             "ToastGeneric"
         } else {
             // Need to do this or an empty placeholder will be shown if no image is set
@@ -478,10 +476,14 @@ impl Toast {
     }
 }
 
+fn is_newer_than_windows81() -> bool {
+    let os = windows_version::OsVersion::current();
+    os.major > 6
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::*;
-    use std::path::Path;
+    use super::*;
 
     #[test]
     fn simple_toast() {
