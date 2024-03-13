@@ -46,6 +46,7 @@ jobs:
 
     - uses: Swatinem/rust-cache@v2
 
+    # https://github.com/microsoft/windows-rs/issues/2614
     - name: Configure Cargo for GNU
       shell: pwsh
       run: |

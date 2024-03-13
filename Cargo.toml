@@ -19,24 +19,14 @@ default-target = "x86_64-pc-windows-msvc"
 
 [dependencies]
 quick-xml = "0.30.0"
+windows-version = "0.1.0"
 
-[target."cfg(target_env = \"msvc\")".dependencies.windows]
+[dependencies.windows]
 version = "0.54"
 features = [
   "Win32_Foundation",
   "Foundation_Collections",
   "Win32_System_SystemInformation",
-  "Data_Xml_Dom",
-  "UI_Notifications"
-]
-
-[target."cfg(target_env = \"gnu\")".dependencies.windows]
-version = "0.54"
-features = [
-  "Win32_Foundation",
-  "Foundation_Collections",
-  "Win32_System_SystemInformation",
-  "Win32_System_LibraryLoader",
   "Data_Xml_Dom",
   "UI_Notifications"
 ]
