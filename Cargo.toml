@@ -22,7 +22,7 @@ quick-xml = "0.30.0"
 windows-version = "0.1.0"
 
   [dependencies.windows]
-  version = "0.54"
+  version = "0.56"
   features = [
   "Win32_Foundation",
   "Foundation_Collections",
