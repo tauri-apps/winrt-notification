@@ -473,16 +473,15 @@ impl Toast {
             }
         };
 
-        let actions = if !self.buttons.is_empty() {
-            let mut str = "<actions>".to_owned();
+        let actions = String::new();
+        if !self.buttons.is_empty() {
+            write!(actions, "<actions>");
             for b in &self.buttons {
-                str += &format!("<action content='{}' arguments='{}'/>", b.content, b.action);
+                write!(actions, "<action content='{}' arguments='{}'/>", b.content, b.action);
             }
-            str += "</actions>";
-            str
-        } else {
-            "".to_owned()
-        };
+            write!(actions, "</actions>");
+            actions 
+        }
 
         toast_xml.LoadXml(&HSTRING::from(format!(
             "<toast {} {}>
