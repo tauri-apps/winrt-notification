@@ -424,7 +424,7 @@ impl Toast {
 
     /// Adds a button to the notification
     /// `content` is the text of the button.
-    /// `action` will be send as an argument on_activated when the button is clicked.
+    /// `action` will be send as an argument [on_activated](Self::on_activated) when the button is clicked.
     pub fn add_button(mut self, content: &str, action: &str) -> Toast {
         self.buttons.push(Button {
             content: content.to_owned(),
