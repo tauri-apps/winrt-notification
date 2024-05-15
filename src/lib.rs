@@ -39,8 +39,8 @@ use windows::{
     UI::Notifications::{ToastActivatedEventArgs, ToastNotificationManager},
 };
 
-use std::fmt::Write;
 use std::fmt::Display;
+use std::fmt::Write;
 use std::path::Path;
 use std::str::FromStr;
 
@@ -474,7 +474,7 @@ impl Toast {
             }
         };
 
-        let actions = String::new();
+        let mut actions = String::new();
         if !self.buttons.is_empty() {
             write!(actions, "<actions>");
             for b in &self.buttons {
