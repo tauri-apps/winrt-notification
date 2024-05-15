@@ -39,6 +39,7 @@ use windows::{
     UI::Notifications::{ToastActivatedEventArgs, ToastNotificationManager},
 };
 
+use std::fmt::Write
 use std::fmt::Display;
 use std::path::Path;
 use std::str::FromStr;
