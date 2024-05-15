@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.3.0]
+
+- [`c0b9b2f`](https://github.com/tauri-apps/winrt-notification/commit/c0b9b2fc149c0b0cb5846c263f2db709218426ff)([#25](https://github.com/tauri-apps/winrt-notification/pull/25)) Add support for adding buttons using `Toast::add_button`. This also comes with a change to `Toast::on_activated` wich will now take an `Option<String>` argument, containing which button was pressed if any.
+
 ## \[0.2.1]
 
 - [`657a812`](https://github.com/tauri-apps/winrt-notification/commit/657a812db80182a1853232fcd87e0fa8483bdc8f)([#22](https://github.com/tauri-apps/winrt-notification/pull/22)) Update `windows` crate to `0.56`
