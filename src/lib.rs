@@ -476,15 +476,15 @@ impl Toast {
 
         let mut actions = String::new();
         if !self.buttons.is_empty() {
-            write!(actions, "<actions>");
+            let _ = write!(actions, "<actions>");
             for b in &self.buttons {
-                write!(
+                let _ = write!(
                     actions,
                     "<action content='{}' arguments='{}'/>",
                     b.content, b.action
                 );
             }
-            write!(actions, "</actions>");
+            let _ = write!(actions, "</actions>");
         }
 
         toast_xml.LoadXml(&HSTRING::from(format!(
