@@ -477,10 +477,13 @@ impl Toast {
         if !self.buttons.is_empty() {
             write!(actions, "<actions>");
             for b in &self.buttons {
-                write!(actions, "<action content='{}' arguments='{}'/>", b.content, b.action);
+                write!(
+                    actions,
+                    "<action content='{}' arguments='{}'/>",
+                    b.content, b.action
+                );
             }
             write!(actions, "</actions>");
-            actions 
         }
 
         toast_xml.LoadXml(&HSTRING::from(format!(
