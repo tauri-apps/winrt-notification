@@ -33,8 +33,10 @@
 
 /// For actions look at https://docs.microsoft.com/en-us/dotnet/api/microsoft.toolkit.uwp.notifications.toastactionscustom?view=win-comm-toolkit-dotnet-7.0
 use windows::{
-    core::IInspectable, Data::Xml::Dom::XmlDocument, Foundation::TypedEventHandler,
-    UI::Notifications::ToastNotificationManager,
+    core::{IInspectable, Interface},
+    Data::Xml::Dom::XmlDocument,
+    Foundation::TypedEventHandler,
+    UI::Notifications::{ToastActivatedEventArgs, ToastNotificationManager},
 };
 
 use std::fmt::Display;
@@ -54,6 +56,7 @@ pub struct Toast {
     app_id: String,
     scenario: String,
     on_activated: Option<TypedEventHandler<ToastNotification, IInspectable>>,
+    buttons: Vec<Button>,
 }
 
 #[derive(Clone, Copy)]
@@ -116,6 +119,11 @@ impl Display for Sound {
             }
         )
     }
+}
+
+struct Button {
+    content: String,
+    action: String,
 }
 
 /// Sounds suitable for Looping
@@ -267,6 +275,7 @@ impl Toast {
             app_id: app_id.to_string(),
             scenario: String::new(),
             on_activated: None,
+            buttons: Vec::new(),
         }
     }
 
@@ -413,11 +422,40 @@ impl Toast {
         self
     }
 
+    /// Adds a button to the notification
+    /// `content` is the text of the button.
+    /// `action` will be send as an argument on_activated when the button is clicked.
+    pub fn add_button(mut self, content: &str, action: &str) -> Toast {
+        self.buttons.push(Button {
+            content: content.to_owned(),
+            action: action.to_owned(),
+        });
+        self
+    }
+
     // HACK: f is static so that we know the function is valid to call.
     //       this would be nice to remove at some point
-    pub fn on_activated<F: FnMut() -> Result<()> + Send + 'static>(mut self, mut f: F) -> Self {
-        self.on_activated = Some(TypedEventHandler::new(move |_, _| f()));
+    pub fn on_activated<F: FnMut(Option<String>) -> Result<()> + Send + 'static>(
+        mut self,
+        mut f: F,
+    ) -> Self {
+        self.on_activated = Some(TypedEventHandler::new(move |_, insp| {
+            f(Self::get_activated_action(insp))
+        }));
         self
+    }
+
+    fn get_activated_action(insp: &Option<IInspectable>) -> Option<String> {
+        if let Some(insp) = insp {
+            if let Ok(args) = insp.cast::<ToastActivatedEventArgs>() {
+                if let Ok(arguments) = args.Arguments() {
+                    if !arguments.is_empty() {
+                        return Some(arguments.to_string());
+                    }
+                }
+            }
+        }
+        None
     }
 
     fn create_template(&self) -> windows::core::Result<ToastNotification> {
@@ -435,6 +473,17 @@ impl Toast {
             }
         };
 
+        let actions = if !self.buttons.is_empty() {
+            let mut str = "<actions>".to_owned();
+            for b in &self.buttons {
+                str += &format!("<action content='{}' arguments='{}'/>", b.content, b.action);
+            }
+            str += "</actions>";
+            str
+        } else {
+            "".to_owned()
+        };
+
         toast_xml.LoadXml(&HSTRING::from(format!(
             "<toast {} {}>
                     <visual>
@@ -443,6 +492,7 @@ impl Toast {
                         {}{}{}
                         </binding>
                     </visual>
+                    {}
                     {}
                 </toast>",
             self.duration,
@@ -453,6 +503,7 @@ impl Toast {
             self.line1,
             self.line2,
             self.audio,
+            actions
         )))?;
 
         // Create the toast
