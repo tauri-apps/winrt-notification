@@ -5,7 +5,7 @@
 
 use std::{process::exit, thread::sleep, time::Duration as StdDuration};
 
-use tauri_winrt_notification::{Duration, Sound, Toast};
+use tauri_winrt_notification::{Duration, Sound, Toast, ToastDismissalReason};
 
 fn main() {
     Toast::new(Toast::POWERSHELL_APP_ID)
@@ -22,8 +22,18 @@ fn main() {
         })
         .add_button("Yes", "yes")
         .add_button("No", "no")
+        .on_dismissed(|reason| {
+            match reason {
+                Some(ToastDismissalReason::UserCanceled) => println!("UserCanceled"),
+                Some(ToastDismissalReason::ApplicationHidden) => println!("ApplicationHidden"),
+                Some(ToastDismissalReason::TimedOut) => println!("TimedOut"),
+                _ => println!("Unknown"),
+            }
+            exit(0)
+        })
         .show()
         .expect("unable to send notification");
+
     println!("Waiting 10 seconds for the notification to be clicked...");
     sleep(StdDuration::from_secs(10));
     println!("The notification wasn't clicked!");
