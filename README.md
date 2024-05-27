@@ -1,20 +1,15 @@
 # winrt-notification
 
-[![license](https://img.shields.io/crates/l/winrt-notification.svg)](https://crates.io/crates/winrt-notification/)
-[![version](https://img.shields.io/crates/v/winrt-notification.svg)](https://crates.io/crates/winrt-notification/)
-[![Build Status](https://img.shields.io/appveyor/ci/allenbenz/winrt-notification.svg)](https://ci.appveyor.com/project/allenbenz/winrt-notification)
+[![license](https://img.shields.io/crates/l/tauri-winrt-notification.svg)](https://crates.io/crates/tauri-winrt-notification/)
+[![documentation](https://img.shields.io/crates/v/tauri-winrt-notification?style=flat-square)](https://docs.rs/tauri-winrt-notification)
+
 
 An incomplete wrapper over the WinRT toast api
 
 Tested in Windows 10 and 8.1. Untested in Windows 8, might work.
 
-[0.5 Documentation](https://allenbenz.github.io/winrt-notification/0_5_0/winrt_notification/index.html)
-
-[0.2 Documentation](https://allenbenz.github.io/winrt-notification/0_2_0/winrt_notification/index.html)
-
 Todo:
 * Add support for Adaptive Content
-* Add support for Actions
 
 Known Issues:
 * Will not work for Windows 7.
@@ -27,14 +22,14 @@ Limitations:
 ```toml
 #Cargo.toml
 [dependencies]
-winrt-notification = "0.5.1"
+tauri-winrt-notification = "0.5.1"
 ```
 
 ## Examples
 
 ```rust
 extern crate winrt_notification;
-use winrt_notification::{Duration, Sound, Toast};
+use tauri_winrt_notification::{Duration, Sound, Toast};
 
 fn main() {
     Toast::new(Toast::POWERSHELL_APP_ID)
@@ -50,7 +45,7 @@ fn main() {
 ```rust
 extern crate winrt_notification;
 use std::path::Path;
-use winrt_notification::{IconCrop, Toast};
+use tauri_winrt_notification::{IconCrop, Toast};
 
 fn main() {
     Toast::new("Your AppUserModeId")

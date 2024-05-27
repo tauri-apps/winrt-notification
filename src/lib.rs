@@ -10,7 +10,6 @@
 //! Todo:
 //!
 //! * Add support for Adaptive Content
-//! * Improve support for Actions
 //!
 //! Known Issues:
 //!
@@ -334,7 +333,7 @@ impl Toast {
             Duration::Long => "duration=\"long\"",
             Duration::Short => "duration=\"short\"",
         }
-        .to_owned();
+        .to_string();
         self
     }
 
@@ -349,7 +348,7 @@ impl Toast {
             Scenario::Reminder => "scenario=\"reminder\"",
             Scenario::IncomingCall => "scenario=\"incomingCall\"",
         }
-        .to_owned();
+        .to_string();
         self
     }
 
@@ -403,7 +402,7 @@ impl Toast {
     pub fn image(mut self, source: &Path, alt_text: &str) -> Toast {
         if !is_newer_than_windows81() {
             // win81 cannot have more than 1 image and shows nothing if there is more than that
-            self.images = "".to_owned();
+            self.images = String::new();
         }
         self.images = format!(
             r#"{}<image id="1" src="file:///{}" alt="{}" />"#,
