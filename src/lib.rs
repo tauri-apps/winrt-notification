@@ -463,10 +463,10 @@ impl Toast {
     //       this would be nice to remove at some point
     pub fn on_activated<F>(mut self, mut f: F) -> Self
     where
-        F: FnMut(Option<String>) + Send + 'static,
+        F: FnMut(Option<String>) -> Result<()> + Send + 'static,
     {
         self.on_activated = Some(TypedEventHandler::new(move |_, insp| {
-            f(Self::get_activated_action(insp));
+            let _ = f(Self::get_activated_action(insp));
             Ok(())
         }));
         self
@@ -504,14 +504,15 @@ impl Toast {
     ///         Some(ToastDismissalReason::TimedOut) => println!("TimedOut"),
     ///         _ => println!("Unknown"),
     ///     }
+    ///     Ok(())
     /// }).show().expect("notification failed");
     /// ```
-    pub fn on_dismissed<F: Fn(Option<ToastDismissalReason>) + Send + 'static>(
-        mut self,
-        f: F,
-    ) -> Self {
+    pub fn on_dismissed<F>(mut self, f: F) -> Self
+    where
+        F: Fn(Option<ToastDismissalReason>) -> Result<()> + Send + 'static,
+    {
         self.on_dismissed = Some(TypedEventHandler::new(move |_, args| {
-            f(Self::get_dismissed_reason(args));
+            let _ = f(Self::get_dismissed_reason(args));
             Ok(())
         }));
         self
