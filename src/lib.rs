@@ -45,8 +45,22 @@ use std::fmt::Write;
 use std::path::Path;
 use std::str::FromStr;
 
-pub use windows::core::{Error, Result, HSTRING};
+pub use windows::core::HSTRING;
 pub use windows::UI::Notifications::ToastNotification;
+
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum ToastError {
+    #[error("Windows API error: {0}")]
+    Os(#[from] windows::core::Error),
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
+    #[error("Unknown error")]
+    Unknown,
+}
+
+pub type Result<T> = std::result::Result<T, ToastError>;
 
 /// `ToastDismissalReason` is a struct representing the reason a toast notification was dismissed.
 ///
@@ -447,27 +461,25 @@ impl Toast {
 
     // HACK: f is static so that we know the function is valid to call.
     //       this would be nice to remove at some point
-    pub fn on_activated<F: FnMut(Option<String>) -> Result<()> + Send + 'static>(
-        mut self,
-        mut f: F,
-    ) -> Self {
+    pub fn on_activated<F>(mut self, mut f: F) -> Self
+    where
+        F: FnMut(Option<String>) + Send + 'static,
+    {
         self.on_activated = Some(TypedEventHandler::new(move |_, insp| {
-            f(Self::get_activated_action(insp))
+            f(Self::get_activated_action(insp));
+            Ok(())
         }));
         self
     }
 
     fn get_activated_action(insp: &Option<IInspectable>) -> Option<String> {
-        if let Some(insp) = insp {
-            if let Ok(args) = insp.cast::<ToastActivatedEventArgs>() {
-                if let Ok(arguments) = args.Arguments() {
-                    if !arguments.is_empty() {
-                        return Some(arguments.to_string());
-                    }
-                }
-            }
-        }
-        None
+        insp.as_ref().and_then(|insp| {
+            insp.cast::<ToastActivatedEventArgs>()
+                .ok()
+                .and_then(|args| args.Arguments().ok())
+                .map(|arg| arg.to_string())
+                .filter(|arg| !arg.is_empty())
+        })
     }
 
     /// Set the function to be called when the toast is dismissed
@@ -489,15 +501,15 @@ impl Toast {
     ///         Some(ToastDismissalReason::TimedOut) => println!("TimedOut"),
     ///         _ => println!("Unknown"),
     ///     }
-    ///     Ok(())
     /// }).show().expect("notification failed");
     /// ```
-    pub fn on_dismissed<F: Fn(Option<ToastDismissalReason>) -> Result<()> + Send + 'static>(
+    pub fn on_dismissed<F: Fn(Option<ToastDismissalReason>) + Send + 'static>(
         mut self,
         f: F,
     ) -> Self {
         self.on_dismissed = Some(TypedEventHandler::new(move |_, args| {
-            f(Self::get_dismissed_reason(args))
+            f(Self::get_dismissed_reason(args));
+            Ok(())
         }));
         self
     }
@@ -513,7 +525,7 @@ impl Toast {
         None
     }
 
-    fn create_template(&self) -> windows::core::Result<ToastNotification> {
+    fn create_template(&self) -> Result<ToastNotification> {
         //using this to get an instance of XmlDocument
         let toast_xml = XmlDocument::new()?;
 
@@ -564,11 +576,11 @@ impl Toast {
         )))?;
 
         // Create the toast
-        ToastNotification::CreateToastNotification(&toast_xml)
+        Ok(ToastNotification::CreateToastNotification(&toast_xml)?)
     }
 
     /// Display the toast on the screen
-    pub fn show(&self) -> windows::core::Result<()> {
+    pub fn show(&self) -> Result<()> {
         let toast_template = self.create_template()?;
         if let Some(handler) = &self.on_activated {
             toast_template.Activated(handler)?;
@@ -582,7 +594,7 @@ impl Toast {
             ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(&self.app_id))?;
 
         // Show the toast.
-        let result = toast_notifier.Show(&toast_template);
+        let result = Ok(toast_notifier.Show(&toast_template)?);
         std::thread::sleep(std::time::Duration::from_millis(10));
         result
     }
