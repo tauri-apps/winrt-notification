@@ -51,7 +51,7 @@ pub use windows::UI::Notifications::ToastNotification;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum ToastError {
+pub enum Error {
     #[error("Windows API error: {0}")]
     Os(#[from] windows::core::Error),
     #[error("IO error: {0}")]
@@ -60,7 +60,7 @@ pub enum ToastError {
     Unknown,
 }
 
-pub type Result<T> = std::result::Result<T, ToastError>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 /// `ToastDismissalReason` is a struct representing the reason a toast notification was dismissed.
 ///
