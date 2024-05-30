@@ -554,16 +554,16 @@ impl Toast {
         }
 
         toast_xml.LoadXml(&HSTRING::from(format!(
-            "<toast {} {}>
-                    <visual>
-                        <binding template=\"{}\">
+            r#"<toast {} {}>
+                <visual>
+                    <binding template="{}">
                         {}
                         {}{}{}
-                        </binding>
-                    </visual>
-                    {}
-                    {}
-                </toast>",
+                    </binding>
+                </visual>
+                {}
+                {}
+            </toast>"#,
             self.duration,
             self.scenario,
             template_binding,
