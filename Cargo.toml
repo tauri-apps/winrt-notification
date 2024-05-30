@@ -19,7 +19,7 @@ default-target = "x86_64-pc-windows-msvc"
 
 [dependencies]
 quick-xml = "0.31"
-thiserror = "1.0.61"
+thiserror = "1.0"
 windows-version = "0.1"
 
   [dependencies.windows]
