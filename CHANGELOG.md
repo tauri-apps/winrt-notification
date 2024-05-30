@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.4.0]
+
+- [`ac6dd7e`](https://github.com/tauri-apps/winrt-notification/commit/ac6dd7e8fe6193722f963e7b08aab0a150134fe8)([#29](https://github.com/tauri-apps/winrt-notification/pull/29)) Added `Error` enum and a `Result` alias type. Also changed `Toast::on_activated`, `Toast::on_dismissed` and `Toas::show` to use the new `Result` alias type.
+
 ## \[0.3.1]
 
 - [`5cf720a`](https://github.com/tauri-apps/winrt-notification/commit/5cf720a71ce03f72ba726292096008f3b9aa81a9)([#27](https://github.com/tauri-apps/winrt-notification/pull/27)) Add `Toast::on_dismissed` handler.
