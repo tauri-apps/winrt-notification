@@ -13,7 +13,7 @@ fn main() {
         .text1("(╯°□°）╯︵ ┻━┻")
         .sound(Some(Sound::SMS))
         .duration(Duration::Short)
-        .on_activated(move |action| -> windows::core::Result<()> {
+        .on_activated(move |action| {
             match action {
                 Some(action) => println!("You've clicked {}!", action),
                 None => println!("You've clicked me!"),
