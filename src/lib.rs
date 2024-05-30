@@ -56,8 +56,6 @@ pub enum Error {
     Os(#[from] windows::core::Error),
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
-    #[error("Unknown error")]
-    Unknown,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
