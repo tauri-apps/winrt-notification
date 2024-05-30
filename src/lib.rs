@@ -269,7 +269,7 @@ pub enum Scenario {
     Default,
     /// This will be displayed pre-expanded and stay on the user's screen till dismissed. Audio will loop by default and will use alarm audio.
     Alarm,
-    /// This will be displayed pre-expanded and stay on the user's screen till dismissed..
+    /// This will be displayed pre-expanded and stay on the user's screen till dismissed.
     Reminder,
     /// This will be displayed pre-expanded in a special call format and stay on the user's screen till dismissed. Audio will loop by default and will use ringtone audio.
     IncomingCall,
@@ -278,7 +278,7 @@ pub enum Scenario {
 impl Toast {
     /// This can be used if you do not have a AppUserModelID.
     ///
-    /// However, the toast will erroniously report its origin as powershell.
+    /// However, the toast will erroneously report its origin as powershell.
     pub const POWERSHELL_APP_ID: &'static str = "{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\
                                                  \\WindowsPowerShell\\v1.0\\powershell.exe";
     /// Constructor for the toast builder.
@@ -386,7 +386,7 @@ impl Toast {
             );
             self
         } else {
-            // Win81 rejects the above xml so we fallback to a simpler call
+            // Win81 rejects the above xml, so we fall back to a simpler call
             self.image(source, alt_text)
         }
     }
@@ -404,7 +404,7 @@ impl Toast {
             );
             self
         } else {
-            // win81 rejects the above xml so we fallback to a simpler call
+            // win81 rejects the above xml, so we fall back to a simpler call
             self.image(source, alt_text)
         }
     }
@@ -450,7 +450,7 @@ impl Toast {
 
     /// Adds a button to the notification
     /// `content` is the text of the button.
-    /// `action` will be send as an argument [on_activated](Self::on_activated) when the button is clicked.
+    /// `action` will be sent as an argument [on_activated](Self::on_activated) when the button is clicked.
     pub fn add_button(mut self, content: &str, action: &str) -> Toast {
         self.buttons.push(Button {
             content: content.to_owned(),
@@ -473,13 +473,16 @@ impl Toast {
     }
 
     fn get_activated_action(insp: &Option<IInspectable>) -> Option<String> {
-        insp.as_ref().and_then(|insp| {
-            insp.cast::<ToastActivatedEventArgs>()
-                .ok()
-                .and_then(|args| args.Arguments().ok())
-                .map(|arg| arg.to_string())
-                .filter(|arg| !arg.is_empty())
-        })
+        if let Some(insp) = insp {
+            if let Ok(args) = insp.cast::<ToastActivatedEventArgs>() {
+                if let Ok(arguments) = args.Arguments() {
+                    if !arguments.is_empty() {
+                        return Some(arguments.to_string());
+                    }
+                }
+            }
+        }
+        None
     }
 
     /// Set the function to be called when the toast is dismissed
