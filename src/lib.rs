@@ -580,7 +580,7 @@ impl Toast {
         )))?;
 
         // Create the toast
-        Ok(ToastNotification::CreateToastNotification(&toast_xml)?)
+        ToastNotification::CreateToastNotification(&toast_xml).map_err(Into::into)
     }
 
     /// Display the toast on the screen
@@ -598,7 +598,7 @@ impl Toast {
             ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(&self.app_id))?;
 
         // Show the toast.
-        let result = Ok(toast_notifier.Show(&toast_template)?);
+        let result = toast_notifier.Show(&toast_template).map_err(Into::into);
         std::thread::sleep(std::time::Duration::from_millis(10));
         result
     }
