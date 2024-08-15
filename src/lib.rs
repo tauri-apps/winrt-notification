@@ -21,16 +21,16 @@
 //!
 //! for xml schema details check out:
 //!
-//! * https://docs.microsoft.com/en-us/uwp/schemas/tiles/toastschema/root-elements
-//! * https://docs.microsoft.com/en-us/windows/uwp/controls-and-patterns/tiles-and-notifications-toast-xml-schema
-//! * https://docs.microsoft.com/en-us/windows/uwp/controls-and-patterns/tiles-and-notifications-adaptive-interactive-toasts
-//! * https://msdn.microsoft.com/library/14a07fce-d631-4bad-ab99-305b703713e6#Sending_toast_notifications_from_desktop_apps
+//! * <https://docs.microsoft.com/en-us/uwp/schemas/tiles/toastschema/root-elements>
+//! * <https://docs.microsoft.com/en-us/windows/uwp/controls-and-patterns/tiles-and-notifications-toast-xml-schema>
+//! * <https://docs.microsoft.com/en-us/windows/uwp/controls-and-patterns/tiles-and-notifications-adaptive-interactive-toasts>
+//! * <https://msdn.microsoft.com/library/14a07fce-d631-4bad-ab99-305b703713e6#Sending_toast_notifications_from_desktop_apps>
 //!
 //! For Windows 7 and older support look into Shell_NotifyIcon
-//! * https://msdn.microsoft.com/en-us/library/windows/desktop/ee330740(v=vs.85).aspx
-//! * https://softwareengineering.stackexchange.com/questions/222339/using-the-system-tray-notification-area-app-in-windows-7
+//! * <https://msdn.microsoft.com/en-us/library/windows/desktop/ee330740(v=vs.85).aspx>
+//! * <https://softwareengineering.stackexchange.com/questions/222339/using-the-system-tray-notification-area-app-in-windows-7>
 //!
-//! For actions look at https://docs.microsoft.com/en-us/dotnet/api/microsoft.toolkit.uwp.notifications.toastactionscustom?view=win-comm-toolkit-dotnet-7.0
+//! For actions look at <https://docs.microsoft.com/en-us/dotnet/api/microsoft.toolkit.uwp.notifications.toastactionscustom?view=win-comm-toolkit-dotnet-7.0>
 use windows::{
     core::{IInspectable, Interface},
     Data::Xml::Dom::XmlDocument,
