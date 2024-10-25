@@ -277,11 +277,15 @@ pub enum Scenario {
 
 #[derive(Clone)]
 pub struct Progress {
+    /// Define a tag to uniquely identify the notification, in order update the notification data later.
     pub tag: String,
+    /// Gets or sets an optional title string. Supports data binding.
     pub title: String,
+    /// Gets or sets a status string (required), which is displayed underneath the progress bar on the left. This string should reflect the status of the operation, like "Downloading..." or "Installing..."
     pub status: String,
-    /// `value` should be in the range of 0.0 to 1.0.
+    /// Gets or sets the value of the progress bar. Supports data binding. Defaults to 0. Can either be a double between 0.0 and 1.0,
     pub value: f32,
+    /// Gets or sets an optional string to be displayed instead of the default percentage string.
     pub value_string: String,
 }
 
