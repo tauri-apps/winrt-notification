@@ -595,6 +595,11 @@ impl Toast {
             }
         };
 
+        let progress = match self.progress {
+            Some(_) => Progress::xml(),
+            None => "",
+        };
+
         let mut actions = String::new();
         if !self.buttons.is_empty() {
             let _ = write!(actions, "<actions>");
@@ -627,10 +632,7 @@ impl Toast {
             self.title,
             self.line1,
             self.line2,
-            match self.progress {
-                Some(_) => Progress::xml(),
-                None => "",
-            },
+            progress,
             self.audio,
             actions
         )))?;
