@@ -647,7 +647,7 @@ impl Toast {
     /// # Example
     /// ```rust
     /// use std::{thread::sleep, time::Duration as StdDuration};
-    /// use tauri_winrt_notification::{Toast, Progress, NotificationUpdateResult};
+    /// use tauri_winrt_notification::{Toast, Progress};
     /// 
     /// fn main() {
     ///     let mut progress = Progress {
@@ -658,11 +658,8 @@ impl Toast {
     ///         value_string: "0/1000 MB".to_string(),
     ///     };
     /// 
-    ///     Toast::new(Toast::POWERSHELL_APP_ID)
-    ///         .title("File Transfer from Phone")
-    ///         .progress(&progress)
-    ///         .show()
-    ///         .expect("Unable to send notification");
+    ///     let toast = Toast::new(Toast::POWERSHELL_APP_ID).progress(&progress);
+    ///     toast.show().expect("notification failed");
     /// 
     ///     for i in 1..=10 {
     ///         sleep(StdDuration::from_secs(1));
@@ -671,27 +668,14 @@ impl Toast {
     ///         progress.value_string = format!("{}/1000 MB", i * 100);
     /// 
     ///         if i == 10 {
-    ///             progress.status = String::from("Completed");
+    ///             progress.status = String::from("Completed!");
     ///         };
     /// 
-    ///         if let Ok(update_result) = Toast::update_progress(Toast::POWERSHELL_APP_ID, &progress) {
-    ///             match update_result {
-    ///                 NotificationUpdateResult::Succeeded => {
-    ///                     println!("Notification updated successfully.");
-    ///                 },
-    ///                 NotificationUpdateResult::Failed => {   
-    ///                     println!("Failed to update notification")
-    ///                 },
-    ///                 NotificationUpdateResult::NotificationNotFound => {
-    ///                     println!("Notification not found. Please ensure the notification ID and Tag are correct.");
-    ///                 },
-    ///                 _ => println!("Unknown notification update result"),
-    ///             }
-    ///         };
+    ///         toast.set_progress(&progress).expect("failed to set notification progress");
     ///     }
     /// }
     /// ```
-    pub fn update_progress(app_id: &str, progress: &Progress) -> Result<NotificationUpdateResult> {
+    pub fn set_progress(&self, progress: &Progress) -> Result<NotificationUpdateResult> {
         let map = StringMap::new()?;
         map.Insert(&HSTRING::from("progressTitle"), &HSTRING::from(&progress.title))?;
         map.Insert(&HSTRING::from("progressStatus"), &HSTRING::from(&progress.status))?;
@@ -702,7 +686,7 @@ impl Toast {
             NotificationData::CreateNotificationDataWithValuesAndSequenceNumber(&map, 2)?;
 
         let toast_notifier =
-            ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(app_id))?;
+            ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(&self.app_id))?;
 
         toast_notifier.UpdateWithTag(&data, &progress.tag()).map_err(Into::into)
     }

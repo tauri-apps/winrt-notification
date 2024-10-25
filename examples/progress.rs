@@ -15,13 +15,12 @@ fn main() {
         value_string: "0/1000 MB".to_string(),
     };
 
-    Toast::new(Toast::POWERSHELL_APP_ID)
+    let toast = Toast::new(Toast::POWERSHELL_APP_ID)
         .title("File Transfer from Phone")
         .text1("Transferring files to your computer...")
         .progress(&progress)
-        .duration(Duration::Long)
-        .show()
-        .expect("Unable to send notification");
+        .duration(Duration::Long);
+    toast.show().expect("notification failed");
 
     for i in 1..=10 {
         sleep(StdDuration::from_secs(1));
@@ -33,18 +32,18 @@ fn main() {
             progress.status = String::from("Completed");
         };
 
-        if let Ok(update_result) = Toast::update_progress(Toast::POWERSHELL_APP_ID, &progress) {
+        if let Ok(update_result) = toast.set_progress(&progress) {
             match update_result {
                 NotificationUpdateResult::Succeeded => {
-                    println!("Notification updated successfully.");
+                    println!("notification updated successfully.");
                 },
                 NotificationUpdateResult::Failed => {   
-                    println!("Failed to update notification")
+                    println!("failed to update notification")
                 },
                 NotificationUpdateResult::NotificationNotFound => {
-                    println!("Notification not found. Please ensure the notification ID and Tag are correct.");
+                    println!("notification not found. Please ensure the notification ID and Tag are correct.");
                 },
-                _ => println!("Unknown notification update result"),
+                _ => println!("unknown notification update result"),
             }
         };
     }
