@@ -1,5 +1,5 @@
 ---
-"winrt-notifications": minor
+"tauri-winrt-notification": minor
 ---
 
-Added support for progress bar
+Added progress bar APIs, `Toast::progress` and `Toast::set_progress`
