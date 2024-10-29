@@ -679,10 +679,10 @@ impl Toast {
     /// ```
     pub fn set_progress(&self, progress: &Progress) -> Result<NotificationUpdateResult> {
         let map = StringMap::new()?;
-        map.Insert(&HSTRING::from("progressTitle"), &HSTRING::from(&progress.title))?;
-        map.Insert(&HSTRING::from("progressStatus"), &HSTRING::from(&progress.status))?;
-        map.Insert(&HSTRING::from("progressValue"), &HSTRING::from(progress.value.to_string()))?;
-        map.Insert(&HSTRING::from("progressValueString"), &HSTRING::from(&progress.value_string))?;
+        map.Insert(&HSTRING::from("progressTitle"), &progress.title())?;
+        map.Insert(&HSTRING::from("progressStatus"), &progress.status())?;
+        map.Insert(&HSTRING::from("progressValue"), &progress.value())?;
+        map.Insert(&HSTRING::from("progressValueString"), &progress.value_string())?;
 
         let data = 
             NotificationData::CreateNotificationDataWithValuesAndSequenceNumber(&map, 2)?;
