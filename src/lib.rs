@@ -34,9 +34,10 @@
 use windows::{
     core::{IInspectable, Interface},
     Data::Xml::Dom::XmlDocument,
-    Foundation::{TypedEventHandler, Collections::StringMap},
+    Foundation::{Collections::StringMap, TypedEventHandler},
     UI::Notifications::{
-        ToastActivatedEventArgs, ToastDismissedEventArgs, ToastNotificationManager, NotificationData
+        NotificationData, ToastActivatedEventArgs, ToastDismissedEventArgs,
+        ToastNotificationManager,
     },
 };
 
@@ -46,8 +47,8 @@ use std::path::Path;
 use std::str::FromStr;
 
 pub use windows::core::HSTRING;
-pub use windows::UI::Notifications::ToastNotification;
 pub use windows::UI::Notifications::NotificationUpdateResult;
+pub use windows::UI::Notifications::ToastNotification;
 
 use thiserror::Error;
 
@@ -650,7 +651,7 @@ impl Toast {
     /// ```rust
     /// use std::{thread::sleep, time::Duration as StdDuration};
     /// use tauri_winrt_notification::{Toast, Progress};
-    /// 
+    ///
     /// fn main() {
     ///     let mut progress = Progress {
     ///         tag: "my_tag".to_string(),
@@ -659,20 +660,20 @@ impl Toast {
     ///         value: 0.0,
     ///         value_string: "0/1000 MB".to_string(),
     ///     };
-    /// 
+    ///
     ///     let toast = Toast::new(Toast::POWERSHELL_APP_ID).progress(&progress);
     ///     toast.show().expect("notification failed");
-    /// 
+    ///
     ///     for i in 1..=10 {
     ///         sleep(StdDuration::from_secs(1));
     ///         
     ///         progress.value = i as f32 / 10.0;
     ///         progress.value_string = format!("{}/1000 MB", i * 100);
-    /// 
+    ///
     ///         if i == 10 {
     ///             progress.status = String::from("Completed!");
     ///         };
-    /// 
+    ///
     ///         toast.set_progress(&progress).expect("failed to set notification progress");
     ///     }
     /// }
@@ -682,15 +683,19 @@ impl Toast {
         map.Insert(&HSTRING::from("progressTitle"), &progress.title())?;
         map.Insert(&HSTRING::from("progressStatus"), &progress.status())?;
         map.Insert(&HSTRING::from("progressValue"), &progress.value())?;
-        map.Insert(&HSTRING::from("progressValueString"), &progress.value_string())?;
+        map.Insert(
+            &HSTRING::from("progressValueString"),
+            &progress.value_string(),
+        )?;
 
-        let data = 
-            NotificationData::CreateNotificationDataWithValuesAndSequenceNumber(&map, 2)?;
+        let data = NotificationData::CreateNotificationDataWithValuesAndSequenceNumber(&map, 2)?;
 
         let toast_notifier =
             ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(&self.app_id))?;
 
-        toast_notifier.UpdateWithTag(&data, &progress.tag()).map_err(Into::into)
+        toast_notifier
+            .UpdateWithTag(&data, &progress.tag())
+            .map_err(Into::into)
     }
 
     /// Display the toast on the screen
@@ -714,7 +719,10 @@ impl Toast {
             map.Insert(&HSTRING::from("progressTitle"), &progress.title())?;
             map.Insert(&HSTRING::from("progressStatus"), &progress.status())?;
             map.Insert(&HSTRING::from("progressValue"), &progress.value())?;
-            map.Insert(&HSTRING::from("progressValueString"), &progress.value_string())?;
+            map.Insert(
+                &HSTRING::from("progressValueString"),
+                &progress.value_string(),
+            )?;
 
             let data =
                 NotificationData::CreateNotificationDataWithValuesAndSequenceNumber(&map, 1)?;
