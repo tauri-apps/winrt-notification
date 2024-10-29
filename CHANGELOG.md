@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.7.0]
+
+- [`987f44f`](https://github.com/tauri-apps/winrt-notification/commit/987f44fe4793ea9b52682adc52d700c581097b4d) ([#37](https://github.com/tauri-apps/winrt-notification/pull/37) by [@iKineticate](https://github.com/tauri-apps/winrt-notification/../../iKineticate)) Added progress bar APIs, `Toast::progress` and `Toast::set_progress`
+
 ## \[0.6.0]
 
 - [`30d14af`](https://github.com/tauri-apps/winrt-notification/commit/30d14afed61a8a42c408f8a6665cdc4429bfc06b) ([#33](https://github.com/tauri-apps/winrt-notification/pull/33) by [@amrbashir](https://github.com/tauri-apps/winrt-notification/../../amrbashir)) Update `windows` crate to `0.58`
