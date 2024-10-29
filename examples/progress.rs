@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: MIT
 
 use std::{thread::sleep, time::Duration as StdDuration};
-use tauri_winrt_notification::{Toast, Duration, Progress, NotificationUpdateResult};
+use tauri_winrt_notification::{Duration, NotificationUpdateResult, Progress, Toast};
 
 fn main() {
     let mut progress = Progress {
@@ -24,7 +24,7 @@ fn main() {
 
     for i in 1..=10 {
         sleep(StdDuration::from_secs(1));
-        
+
         progress.value = i as f32 / 10.0;
         progress.value_string = format!("{}/1000 MB", i * 100);
 
@@ -36,13 +36,13 @@ fn main() {
             match update_result {
                 NotificationUpdateResult::Succeeded => {
                     println!("notification updated successfully.");
-                },
-                NotificationUpdateResult::Failed => {   
+                }
+                NotificationUpdateResult::Failed => {
                     println!("failed to update notification")
-                },
+                }
                 NotificationUpdateResult::NotificationNotFound => {
                     println!("notification not found. Please ensure the notification ID and Tag are correct.");
-                },
+                }
                 _ => println!("unknown notification update result"),
             }
         };
