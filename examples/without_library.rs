@@ -42,7 +42,7 @@ fn do_toast() -> windows::core::Result<()> {
                 <audio src="ms-winsoundevent:Notification.SMS" />
                 <!-- <audio silent="true" /> -->
             </toast>"#,
-            quick_xml::escape::escape(&Path::new("C:\\path_to_image_in_toast.jpg").display().to_string()),
+            quick_xml::escape::escape(Path::new("C:\\path_to_image_in_toast.jpg").display().to_string()),
     ))).expect("the xml is malformed");
 
     // Create the toast and attach event listeners
