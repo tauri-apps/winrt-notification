@@ -12,18 +12,18 @@ documentation = "https://docs.rs/tauri-winrt-notification/"
 repository = "https://github.com/tauri-apps/winrt-notification"
 license = "MIT OR Apache-2.0"
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.74"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"
 
 [dependencies]
-quick-xml = "0.31"
-thiserror = "1.0"
+quick-xml = "0.37"
+thiserror = "2"
 windows-version = "0.1"
 
   [dependencies.windows]
-  version = "0.58"
+  version = "0.60"
   features = [
   "Win32_Foundation",
   "Foundation_Collections",
