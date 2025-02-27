@@ -427,7 +427,7 @@ impl Toast {
                 r#"{}<image placement="appLogoOverride" {} src="file:///{}" alt="{}" />"#,
                 self.images,
                 crop_type_attr,
-                quick_xml::escape::escape(&source.display().to_string()),
+                quick_xml::escape::escape(source.display().to_string()),
                 quick_xml::escape::escape(alt_text)
             );
             self
@@ -445,7 +445,7 @@ impl Toast {
             self.images = format!(
                 r#"{}<image placement="Hero" src="file:///{}" alt="{}" />"#,
                 self.images,
-                quick_xml::escape::escape(&source.display().to_string()),
+                quick_xml::escape::escape(source.display().to_string()),
                 quick_xml::escape::escape(alt_text)
             );
             self
@@ -467,7 +467,7 @@ impl Toast {
         self.images = format!(
             r#"{}<image id="1" src="file:///{}" alt="{}" />"#,
             self.images,
-            quick_xml::escape::escape(&source.display().to_string()),
+            quick_xml::escape::escape(source.display().to_string()),
             quick_xml::escape::escape(alt_text)
         );
         self
