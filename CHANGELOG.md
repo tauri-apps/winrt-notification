@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.7.1]
+
+- [`3ab4d18`](https://github.com/tauri-apps/winrt-notification/commit/3ab4d1867bcf91313989093e05869fd5fd40e79b) ([#43](https://github.com/tauri-apps/winrt-notification/pull/43) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Update `windows` crate to 0.60. This bumps the MSRV to 1.74.
+
 ## \[0.7.0]
 
 - [`987f44f`](https://github.com/tauri-apps/winrt-notification/commit/987f44fe4793ea9b52682adc52d700c581097b4d) ([#37](https://github.com/tauri-apps/winrt-notification/pull/37) by [@iKineticate](https://github.com/tauri-apps/winrt-notification/../../iKineticate)) Added progress bar APIs, `Toast::progress` and `Toast::set_progress`
