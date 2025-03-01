@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-License-Identifier: MIT
 
-use std::{thread::sleep, time::Duration as StdDuration};
+use std::{thread::sleep, time::Duration};
 
 use tauri_winrt_notification::Toast;
 use windows_registry::CURRENT_USER;
@@ -26,17 +26,17 @@ fn main() -> windows_registry::Result<()> {
         .expect("unable to send notification");
 
     // The notification won't appear if we clean up registry too early
-    sleep(StdDuration::from_secs(3));
+    sleep(Duration::from_secs(3));
     clean_up_registry()
 }
 
 // Create registry key for this example
 fn init_registry() -> windows_registry::Result<()> {
-    let icon_path = std::path::absolute("resources/tauri.png")?;
+    let icon_path = std::env::current_dir()?.join(r"resources\tauri.png");
 
     let key = CURRENT_USER.create(format!(r"SOFTWARE\Classes\AppUserModelId\{APP_ID}"))?;
-    key.set_string("DisplayName", &APP_NAME)?;
-    key.set_string("IconBackgroundColor", &"0")?;
+    key.set_string("DisplayName", APP_NAME)?;
+    key.set_string("IconBackgroundColor", "0")?;
     key.set_hstring("IconUri", &icon_path.as_path().into())
 }
 
