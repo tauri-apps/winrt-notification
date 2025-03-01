@@ -31,3 +31,6 @@ windows-version = "0.1"
   "Data_Xml_Dom",
   "UI_Notifications"
 ]
+
+[target.'cfg(windows)'.dev-dependencies]
+windows-registry = "0.5.0"
