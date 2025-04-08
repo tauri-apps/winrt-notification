@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.7.2]
+
+- [`a7ec562`](https://github.com/tauri-apps/winrt-notification/commit/a7ec5622c4670d59845ff43b74a7c01b52a1945a) ([#46](https://github.com/tauri-apps/winrt-notification/pull/46) by [@renovate](https://github.com/tauri-apps/winrt-notification/../../renovate)) Update `windows` crate to `0.61`.
+
 ## \[0.7.1]
 
 - [`3ab4d18`](https://github.com/tauri-apps/winrt-notification/commit/3ab4d1867bcf91313989093e05869fd5fd40e79b) ([#43](https://github.com/tauri-apps/winrt-notification/pull/43) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Update `windows` crate to 0.60. This bumps the MSRV to 1.74.
