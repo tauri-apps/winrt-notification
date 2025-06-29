@@ -481,14 +481,12 @@ impl Toast {
             None => "<audio silent=\"true\" />".to_owned(),
             Some(Sound::Default) => "".to_owned(),
             Some(Sound::Loop(sound)) => format!(
-                r#"<audio loop="true" src="ms-winsoundevent:Notification.Looping.{}" />"#,
-                sound
+                r#"<audio loop="true" src="ms-winsoundevent:Notification.Looping.{sound}" />"#
             ),
-            Some(Sound::Single(sound)) => format!(
-                r#"<audio src="ms-winsoundevent:Notification.Looping.{}" />"#,
-                sound
-            ),
-            Some(sound) => format!(r#"<audio src="ms-winsoundevent:Notification.{}" />"#, sound),
+            Some(Sound::Single(sound)) => {
+                format!(r#"<audio src="ms-winsoundevent:Notification.Looping.{sound}" />"#)
+            }
+            Some(sound) => format!(r#"<audio src="ms-winsoundevent:Notification.{sound}" />"#),
         };
 
         self
