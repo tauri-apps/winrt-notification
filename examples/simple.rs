@@ -15,7 +15,7 @@ fn main() {
         .duration(Duration::Short)
         .on_activated(move |action| {
             match action {
-                Some(action) => println!("You've clicked {}!", action),
+                Some(action) => println!("You've clicked {action}!"),
                 None => println!("You've clicked me!"),
             }
             exit(0);
