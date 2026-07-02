@@ -1,11 +1,21 @@
 {
   "extends": ["config:recommended"],
+  "labels": ["type: chore"],
   "rangeStrategy": "replace",
+  "forkProcessing": "enabled",
   "packageRules": [
     {
+      "matchPackageNames": ["*"],
       "semanticCommitType": "chore",
-      "matchPackageNames": ["*"]
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "Group windows-rs / webview2-com crates",
+      "groupName": "windows-rs and webview2 crates",
+      "matchSourceUrls": [
+        "https://github.com/microsoft/windows-rs",
+        "https://github.com/wravery/webview2-rs"
+      ]
     }
-  ],
-  "forkProcessing": "enabled"
+  ]
 }
