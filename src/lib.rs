@@ -32,7 +32,7 @@
 //!
 //! For actions look at <https://docs.microsoft.com/en-us/dotnet/api/microsoft.toolkit.uwp.notifications.toastactionscustom?view=win-comm-toolkit-dotnet-7.0>
 
-mod xml_escape;
+use quick_xml::escape as xml_escape;
 
 use windows::{
     core::{IInspectable, Interface},
