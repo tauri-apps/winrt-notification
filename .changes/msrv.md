@@ -1,5 +1,5 @@
 ---
-tauri-winrt-notification: minor
+tauri-winrt-notification: patch
 ---
 
 Raise MSRV to `1.82`.
