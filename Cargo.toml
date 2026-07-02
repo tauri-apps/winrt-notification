@@ -18,7 +18,6 @@ rust-version = "1.74"
 default-target = "x86_64-pc-windows-msvc"
 
 [dependencies]
-quick-xml = "0.38"
 thiserror = "2"
 windows-version = "0.1"
 
@@ -33,4 +32,5 @@ windows-version = "0.1"
 ]
 
 [target.'cfg(windows)'.dev-dependencies]
+quick-xml = "0.41"
 windows-registry = "0.5.0"

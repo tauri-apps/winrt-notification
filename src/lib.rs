@@ -31,6 +31,9 @@
 //! * <https://softwareengineering.stackexchange.com/questions/222339/using-the-system-tray-notification-area-app-in-windows-7>
 //!
 //! For actions look at <https://docs.microsoft.com/en-us/dotnet/api/microsoft.toolkit.uwp.notifications.toastactionscustom?view=win-comm-toolkit-dotnet-7.0>
+
+mod xml_escape;
+
 use windows::{
     core::{IInspectable, Interface},
     Data::Xml::Dom::XmlDocument,
@@ -358,7 +361,7 @@ impl Toast {
     pub fn title(mut self, content: &str) -> Toast {
         self.title = format!(
             r#"<text id="1">{}</text>"#,
-            &quick_xml::escape::escape(content)
+            xml_escape::escape(content)
         );
         self
     }
@@ -370,7 +373,7 @@ impl Toast {
     pub fn text1(mut self, content: &str) -> Toast {
         self.line1 = format!(
             r#"<text id="2">{}</text>"#,
-            &quick_xml::escape::escape(content)
+            xml_escape::escape(content)
         );
         self
     }
@@ -382,7 +385,7 @@ impl Toast {
     pub fn text2(mut self, content: &str) -> Toast {
         self.line2 = format!(
             r#"<text id="3">{}</text>"#,
-            &quick_xml::escape::escape(content)
+            xml_escape::escape(content)
         );
         self
     }
@@ -427,8 +430,8 @@ impl Toast {
                 r#"{}<image placement="appLogoOverride" {} src="file:///{}" alt="{}" />"#,
                 self.images,
                 crop_type_attr,
-                quick_xml::escape::escape(source.display().to_string()),
-                quick_xml::escape::escape(alt_text)
+                xml_escape::escape(source.display().to_string()),
+                xml_escape::escape(alt_text)
             );
             self
         } else {
@@ -445,8 +448,8 @@ impl Toast {
             self.images = format!(
                 r#"{}<image placement="Hero" src="file:///{}" alt="{}" />"#,
                 self.images,
-                quick_xml::escape::escape(source.display().to_string()),
-                quick_xml::escape::escape(alt_text)
+                xml_escape::escape(source.display().to_string()),
+                xml_escape::escape(alt_text)
             );
             self
         } else {
@@ -467,8 +470,8 @@ impl Toast {
         self.images = format!(
             r#"{}<image id="1" src="file:///{}" alt="{}" />"#,
             self.images,
-            quick_xml::escape::escape(source.display().to_string()),
-            quick_xml::escape::escape(alt_text)
+            xml_escape::escape(source.display().to_string()),
+            xml_escape::escape(alt_text)
         );
         self
     }
