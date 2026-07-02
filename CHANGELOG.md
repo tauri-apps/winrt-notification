@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.7.3]
+
+- [`09a4135`](https://github.com/tauri-apps/winrt-notification/commit/09a4135a871c6ead29832dca5698948fb30bf94b) ([#53](https://github.com/tauri-apps/winrt-notification/pull/53) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Drop quick-xml dependency.
+
 ## \[0.7.2]
 
 - [`a7ec562`](https://github.com/tauri-apps/winrt-notification/commit/a7ec5622c4670d59845ff43b74a7c01b52a1945a) ([#46](https://github.com/tauri-apps/winrt-notification/pull/46) by [@renovate](https://github.com/tauri-apps/winrt-notification/../../renovate)) Update `windows` crate to `0.61`.
