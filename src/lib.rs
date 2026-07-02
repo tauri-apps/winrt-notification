@@ -359,10 +359,7 @@ impl Toast {
     /// Will be white.
     /// Supports Unicode ✓
     pub fn title(mut self, content: &str) -> Toast {
-        self.title = format!(
-            r#"<text id="1">{}</text>"#,
-            xml_escape::escape(content)
-        );
+        self.title = format!(r#"<text id="1">{}</text>"#, xml_escape::escape(content));
         self
     }
 
@@ -371,10 +368,7 @@ impl Toast {
     /// Will be grey.
     /// Supports Unicode ✓
     pub fn text1(mut self, content: &str) -> Toast {
-        self.line1 = format!(
-            r#"<text id="2">{}</text>"#,
-            xml_escape::escape(content)
-        );
+        self.line1 = format!(r#"<text id="2">{}</text>"#, xml_escape::escape(content));
         self
     }
 
@@ -383,10 +377,7 @@ impl Toast {
     /// Will be grey.
     /// Supports Unicode ✓
     pub fn text2(mut self, content: &str) -> Toast {
-        self.line2 = format!(
-            r#"<text id="3">{}</text>"#,
-            xml_escape::escape(content)
-        );
+        self.line2 = format!(r#"<text id="3">{}</text>"#, xml_escape::escape(content));
         self
     }
 
