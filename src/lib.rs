@@ -505,9 +505,9 @@ impl Toast {
 
     // HACK: f is static so that we know the function is valid to call.
     //       this would be nice to remove at some point
-    pub fn on_activated<F>(mut self, mut f: F) -> Self
+    pub fn on_activated<F>(mut self, f: F) -> Self
     where
-        F: FnMut(Option<String>) -> Result<()> + Send + 'static,
+        F: Fn(Option<String>) -> Result<()> + Send + 'static,
     {
         self.on_activated = Some(TypedEventHandler::new(move |_, insp| {
             let _ = f(Self::get_activated_action(&insp));
