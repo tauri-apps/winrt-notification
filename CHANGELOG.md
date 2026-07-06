@@ -1,5 +1,11 @@
 # Changelog
 
+## \[0.8.0]
+
+- [`da13f08`](https://github.com/tauri-apps/winrt-notification/commit/da13f080d96599cd8b5d5b99f0abffbb01e9081d) ([#56](https://github.com/tauri-apps/winrt-notification/pull/56) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Raise MSRV to `1.82`.
+- [`5f6cc46`](https://github.com/tauri-apps/winrt-notification/commit/5f6cc46e333d57d9d204fc0b8a821915310a766c) ([#57](https://github.com/tauri-apps/winrt-notification/pull/57) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Removed manual string escape in favor of calling Windows APIs.
+- [`da13f08`](https://github.com/tauri-apps/winrt-notification/commit/da13f080d96599cd8b5d5b99f0abffbb01e9081d) ([#56](https://github.com/tauri-apps/winrt-notification/pull/56) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Update `windows` crate to `0.62`. `on_activated` now takes an `Fn` instead of `FnMut`.
+
 ## \[0.7.3]
 
 - [`09a4135`](https://github.com/tauri-apps/winrt-notification/commit/09a4135a871c6ead29832dca5698948fb30bf94b) ([#53](https://github.com/tauri-apps/winrt-notification/pull/53) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Drop quick-xml dependency.
