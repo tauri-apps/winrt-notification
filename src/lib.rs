@@ -396,6 +396,8 @@ impl Toast {
 
     /// Set the icon shown in the upper left of the toast
     ///
+    /// Source paths must be absolute and not contain a UNC prefix.
+    ///
     /// The default is determined by your app id.
     /// If you are using the powershell workaround, it will be the powershell icon
     pub fn icon(mut self, source: &Path, crop: IconCrop, alt_text: &str) -> Toast {
@@ -415,6 +417,8 @@ impl Toast {
 
     /// Add/Set a Hero image for the toast.
     ///
+    /// Source paths must be absolute and not contain a UNC prefix.
+    ///
     /// This will be above the toast text and the icon.
     pub fn hero(mut self, source: &Path, alt_text: &str) -> Toast {
         if is_newer_than_windows81() {
@@ -431,7 +435,9 @@ impl Toast {
         }
     }
 
-    /// Add an image to the toast
+    /// Add an image to the toast.
+    ///
+    /// Source paths must be absolute and not contain a UNC prefix.
     ///
     /// May be done many times.
     /// Will appear below text.
