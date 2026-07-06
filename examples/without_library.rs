@@ -35,7 +35,7 @@ fn do_toast() -> windows::core::Result<()> {
                         <text id="3">third line</text>
                         <image placement="appLogoOverride" hint-crop="circle" src="file:///c:/path_to_image_above_toast.jpg" alt="alt text" />
                         <image placement="Hero" src="file:///C:/path_to_image_in_toast.jpg" alt="alt text2" />
-                        <image id="1" src="file:///{}" alt="another_image" />
+                        <image id="1" src="file:///C:/path_to_image_in_toast.jpg" alt="another_image" />
                     </binding>
                 </visual>
                 <audio src="ms-winsoundevent:Notification.SMS" />
