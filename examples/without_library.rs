@@ -4,7 +4,6 @@
 // SPDX-License-Identifier: MIT
 
 // How to create a toast without using this library
-use std::path::Path;
 
 // You need to have the windows crate in your Cargo.toml
 // with the following features:
@@ -28,7 +27,7 @@ fn do_toast() -> windows::core::Result<()> {
     let toast_xml = XmlDocument::new()?;
 
     toast_xml.LoadXml(&HSTRING::from(
-        format!(r#"<toast duration="long">
+        r#"<toast duration="long">
                 <visual>
                     <binding template="ToastGeneric">
                         <text id="1">title</text>
@@ -41,9 +40,8 @@ fn do_toast() -> windows::core::Result<()> {
                 </visual>
                 <audio src="ms-winsoundevent:Notification.SMS" />
                 <!-- <audio silent="true" /> -->
-            </toast>"#,
-            quick_xml::escape::escape(Path::new("C:\\path_to_image_in_toast.jpg").display().to_string()),
-    ))).expect("the xml is malformed");
+            </toast>"#
+    )).expect("the xml is malformed");
 
     // Create the toast and attach event listeners
     let toast_template = ToastNotification::CreateToastNotification(&toast_xml)?;
