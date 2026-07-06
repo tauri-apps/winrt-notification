@@ -32,10 +32,8 @@
 //!
 //! For actions look at <https://docs.microsoft.com/en-us/dotnet/api/microsoft.toolkit.uwp.notifications.toastactionscustom?view=win-comm-toolkit-dotnet-7.0>
 
-mod xml_escape;
-
 use windows::{
-    core::{IInspectable, Interface},
+    core::{h, IInspectable, Interface},
     Data::Xml::Dom::XmlDocument,
     Foundation::{Collections::StringMap, TypedEventHandler},
     UI::Notifications::{
@@ -45,7 +43,6 @@ use windows::{
 };
 
 use std::fmt::Display;
-use std::fmt::Write;
 use std::path::Path;
 use std::str::FromStr;
 
@@ -74,15 +71,15 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub use windows::UI::Notifications::ToastDismissalReason;
 
 pub struct Toast {
-    duration: String,
-    title: String,
-    line1: String,
-    line2: String,
-    images: String,
-    audio: String,
+    duration: Option<Duration>,
+    title: Option<String>,
+    line1: Option<String>,
+    line2: Option<String>,
+    images: Vec<Image>,
+    audio: Option<Sound>,
     app_id: String,
     progress: Option<Progress>,
-    scenario: String,
+    scenario: Option<Scenario>,
     on_activated: Option<TypedEventHandler<ToastNotification, IInspectable>>,
     on_dismissed: Option<TypedEventHandler<ToastNotification, ToastDismissedEventArgs>>,
     buttons: Vec<Button>,
@@ -97,7 +94,7 @@ pub enum Duration {
     Long,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Sound {
     Default,
     IM,
@@ -157,7 +154,7 @@ struct Button {
 
 /// Sounds suitable for Looping
 #[allow(dead_code)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum LoopableSound {
     Alarm,
     Alarm2,
@@ -260,7 +257,7 @@ impl Display for LoopableSound {
 }
 
 #[allow(dead_code)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum IconCrop {
     Square,
     Circular,
@@ -294,14 +291,6 @@ pub struct Progress {
 }
 
 impl Progress {
-    fn xml() -> &'static str {
-        r#"<progress
-                title="{progressTitle}"
-                value="{progressValue}"
-                valueStringOverride="{progressValueString}"
-                status="{progressStatus}"/>"#
-    }
-
     fn tag(&self) -> HSTRING {
         HSTRING::from(&self.tag)
     }
@@ -323,6 +312,15 @@ impl Progress {
     }
 }
 
+struct Image {
+    source: String,
+    alt_text: String,
+    // Win 10+
+    placement: Option<String>,
+    // Win 10+
+    crop_type: Option<IconCrop>,
+}
+
 impl Toast {
     /// This can be used if you do not have a AppUserModelID.
     ///
@@ -339,15 +337,15 @@ impl Toast {
     #[allow(dead_code)]
     pub fn new(app_id: &str) -> Toast {
         Toast {
-            duration: String::new(),
-            title: String::new(),
-            line1: String::new(),
-            line2: String::new(),
-            images: String::new(),
-            audio: String::new(),
+            duration: None,
+            title: None,
+            line1: None,
+            line2: None,
+            images: Vec::new(),
+            audio: None,
             app_id: app_id.to_string(),
             progress: None,
-            scenario: String::new(),
+            scenario: None,
             on_activated: None,
             on_dismissed: None,
             buttons: Vec::new(),
@@ -359,7 +357,7 @@ impl Toast {
     /// Will be white.
     /// Supports Unicode ✓
     pub fn title(mut self, content: &str) -> Toast {
-        self.title = format!(r#"<text id="1">{}</text>"#, xml_escape::escape(content));
+        self.title = Some(content.to_string());
         self
     }
 
@@ -368,7 +366,7 @@ impl Toast {
     /// Will be grey.
     /// Supports Unicode ✓
     pub fn text1(mut self, content: &str) -> Toast {
-        self.line1 = format!(r#"<text id="2">{}</text>"#, xml_escape::escape(content));
+        self.line1 = Some(content.to_string());
         self
     }
 
@@ -377,17 +375,13 @@ impl Toast {
     /// Will be grey.
     /// Supports Unicode ✓
     pub fn text2(mut self, content: &str) -> Toast {
-        self.line2 = format!(r#"<text id="3">{}</text>"#, xml_escape::escape(content));
+        self.line2 = Some(content.to_string());
         self
     }
 
     /// Set the length of time to show the toast
     pub fn duration(mut self, duration: Duration) -> Toast {
-        self.duration = match duration {
-            Duration::Long => "duration=\"long\"",
-            Duration::Short => "duration=\"short\"",
-        }
-        .to_string();
+        self.duration = Some(duration);
         self
     }
 
@@ -396,34 +390,24 @@ impl Toast {
     /// The system keeps the notification on screen until the user acts upon/dismisses it.
     /// The system also plays the suitable notification sound as well.
     pub fn scenario(mut self, scenario: Scenario) -> Toast {
-        self.scenario = match scenario {
-            Scenario::Default => "",
-            Scenario::Alarm => "scenario=\"alarm\"",
-            Scenario::Reminder => "scenario=\"reminder\"",
-            Scenario::IncomingCall => "scenario=\"incomingCall\"",
-        }
-        .to_string();
+        self.scenario = Some(scenario);
         self
     }
 
     /// Set the icon shown in the upper left of the toast
     ///
+    /// Source paths must be absolute and not contain a UNC prefix.
+    ///
     /// The default is determined by your app id.
     /// If you are using the powershell workaround, it will be the powershell icon
     pub fn icon(mut self, source: &Path, crop: IconCrop, alt_text: &str) -> Toast {
         if is_newer_than_windows81() {
-            let crop_type_attr = match crop {
-                IconCrop::Square => "".to_string(),
-                IconCrop::Circular => "hint-crop=\"circle\"".to_string(),
-            };
-
-            self.images = format!(
-                r#"{}<image placement="appLogoOverride" {} src="file:///{}" alt="{}" />"#,
-                self.images,
-                crop_type_attr,
-                xml_escape::escape(source.display().to_string()),
-                xml_escape::escape(alt_text)
-            );
+            self.images.push(Image {
+                source: source.display().to_string(),
+                alt_text: alt_text.to_string(),
+                placement: Some("appLogoOverride".to_string()),
+                crop_type: Some(crop),
+            });
             self
         } else {
             // Win81 rejects the above xml, so we fall back to a simpler call
@@ -433,15 +417,17 @@ impl Toast {
 
     /// Add/Set a Hero image for the toast.
     ///
+    /// Source paths must be absolute and not contain a UNC prefix.
+    ///
     /// This will be above the toast text and the icon.
     pub fn hero(mut self, source: &Path, alt_text: &str) -> Toast {
         if is_newer_than_windows81() {
-            self.images = format!(
-                r#"{}<image placement="Hero" src="file:///{}" alt="{}" />"#,
-                self.images,
-                xml_escape::escape(source.display().to_string()),
-                xml_escape::escape(alt_text)
-            );
+            self.images.push(Image {
+                source: source.display().to_string(),
+                alt_text: alt_text.to_string(),
+                placement: Some("Hero".to_string()),
+                crop_type: None,
+            });
             self
         } else {
             // win81 rejects the above xml, so we fall back to a simpler call
@@ -449,21 +435,23 @@ impl Toast {
         }
     }
 
-    /// Add an image to the toast
+    /// Add an image to the toast.
+    ///
+    /// Source paths must be absolute and not contain a UNC prefix.
     ///
     /// May be done many times.
     /// Will appear below text.
     pub fn image(mut self, source: &Path, alt_text: &str) -> Toast {
         if !is_newer_than_windows81() {
             // win81 cannot have more than 1 image and shows nothing if there is more than that
-            self.images = String::new();
+            self.images.clear();
         }
-        self.images = format!(
-            r#"{}<image id="1" src="file:///{}" alt="{}" />"#,
-            self.images,
-            xml_escape::escape(source.display().to_string()),
-            xml_escape::escape(alt_text)
-        );
+        self.images.push(Image {
+            source: source.display().to_string(),
+            alt_text: alt_text.to_string(),
+            placement: None,
+            crop_type: None,
+        });
         self
     }
 
@@ -471,18 +459,7 @@ impl Toast {
     ///
     /// Default is [Sound::IM](enum.Sound.html)
     pub fn sound(mut self, src: Option<Sound>) -> Toast {
-        self.audio = match src {
-            None => "<audio silent=\"true\" />".to_owned(),
-            Some(Sound::Default) => "".to_owned(),
-            Some(Sound::Loop(sound)) => format!(
-                r#"<audio loop="true" src="ms-winsoundevent:Notification.Looping.{sound}" />"#
-            ),
-            Some(Sound::Single(sound)) => {
-                format!(r#"<audio src="ms-winsoundevent:Notification.Looping.{sound}" />"#)
-            }
-            Some(sound) => format!(r#"<audio src="ms-winsoundevent:Notification.{sound}" />"#),
-        };
-
+        self.audio = src;
         self
     }
 
@@ -574,64 +551,148 @@ impl Toast {
     }
 
     fn create_template(&self) -> Result<ToastNotification> {
-        //using this to get an instance of XmlDocument
-        let toast_xml = XmlDocument::new()?;
+        let xml_doc = XmlDocument::new()?;
 
         let template_binding = if is_newer_than_windows81() {
-            "ToastGeneric"
+            h!("ToastGeneric")
         } else {
             // Need to do this or an empty placeholder will be shown if no image is set
             if self.images.is_empty() {
-                "ToastText04"
+                h!("ToastText04")
             } else {
-                "ToastImageAndText04"
+                h!("ToastImageAndText04")
             }
         };
 
-        let progress = match self.progress {
-            Some(_) => Progress::xml(),
-            None => "",
-        };
+        let xml_el_toast = xml_doc.CreateElement(h!("toast"))?;
+        let xml_el_visual = xml_doc.CreateElement(h!("visual"))?;
+        let xml_el_binding = xml_doc.CreateElement(h!("binding"))?;
 
-        let mut actions = String::new();
-        if !self.buttons.is_empty() {
-            let _ = write!(actions, "<actions>");
-            for b in &self.buttons {
-                let _ = write!(
-                    actions,
-                    "<action content='{}' arguments='{}'/>",
-                    b.content, b.action
-                );
-            }
-            let _ = write!(actions, "</actions>");
+        if let Some(duration) = self.duration {
+            let duration = match duration {
+                Duration::Long => h!("long"),
+                Duration::Short => h!("short"),
+            };
+            xml_el_toast.SetAttribute(h!("duration"), duration)?;
         }
 
-        toast_xml.LoadXml(&HSTRING::from(format!(
-            r#"<toast {} {}>
-                <visual>
-                    <binding template="{}">
-                        {}
-                        {}{}{}
-                        {}
-                    </binding>
-                </visual>
-                {}
-                {}
-            </toast>"#,
-            self.duration,
-            self.scenario,
-            template_binding,
-            self.images,
-            self.title,
-            self.line1,
-            self.line2,
-            progress,
-            self.audio,
-            actions
-        )))?;
+        if let Some(scenario) = self.scenario {
+            let scenario = match scenario {
+                Scenario::Default => h!(""),
+                Scenario::Alarm => h!("alarm"),
+                Scenario::Reminder => h!("reminder"),
+                Scenario::IncomingCall => h!("incomingCall"),
+            };
+            xml_el_toast.SetAttribute(h!("scenario"), scenario)?;
+        }
+
+        xml_el_binding.SetAttribute(h!("template"), template_binding)?;
+
+        for image in &self.images {
+            let xml_el = xml_doc.CreateElement(h!("image"))?;
+            // This doesn't seem to be required. Also setting the same ID for all images sounds wrong but is kept to keep behavior unchanged.
+            // It may be required in Windows 8.
+            xml_el.SetAttribute(h!("id"), h!("1"))?;
+            xml_el.SetAttribute(
+                h!("src"),
+                &format!("file:///{}", image.source.clone()).into(),
+            )?;
+            xml_el.SetAttribute(h!("alt"), &HSTRING::from(&image.alt_text))?;
+            if let Some(placement) = &image.placement {
+                xml_el.SetAttribute(h!("placement"), &placement.into())?;
+            }
+            if let Some(crop_type) = image.crop_type {
+                if crop_type == IconCrop::Circular {
+                    xml_el.SetAttribute(h!("hint-crop"), h!("circle"))?;
+                }
+            };
+
+            xml_el_binding.AppendChild(&xml_el)?;
+        }
+
+        if let Some(title) = &self.title {
+            let xml_el = xml_doc.CreateElement(h!("text"))?;
+            xml_el.SetAttribute(h!("id"), h!("1"))?;
+            xml_el.SetInnerText(&title.into())?;
+            xml_el_binding.AppendChild(&xml_el)?;
+        }
+
+        if let Some(line1) = &self.line1 {
+            let xml_el = xml_doc.CreateElement(h!("text"))?;
+            xml_el.SetAttribute(h!("id"), h!("2"))?;
+            xml_el.SetInnerText(&line1.into())?;
+            xml_el_binding.AppendChild(&xml_el)?;
+        }
+
+        if let Some(line2) = &self.line2 {
+            let xml_el = xml_doc.CreateElement(h!("text"))?;
+            xml_el.SetAttribute(h!("id"), h!("3"))?;
+            xml_el.SetInnerText(&line2.into())?;
+            xml_el_binding.AppendChild(&xml_el)?;
+        }
+
+        if let Some(progress) = &self.progress {
+            let xml_el = xml_doc.CreateElement(h!("progress"))?;
+            xml_el.SetAttribute(h!("title"), &progress.title())?;
+            xml_el.SetAttribute(h!("value"), &progress.value())?;
+            xml_el.SetAttribute(h!("valueStringOverride"), &progress.value_string())?;
+            xml_el.SetAttribute(h!("status"), &progress.status())?;
+            xml_el_binding.AppendChild(&xml_el)?;
+        }
+
+        xml_el_visual.AppendChild(&xml_el_binding)?;
+        xml_el_toast.AppendChild(&xml_el_visual)?;
+
+        // audio
+        if let Some(sound) = self.audio {
+            if sound != Sound::Default {
+                let xml_el = xml_doc.CreateElement(h!("progress"))?;
+                match sound {
+                    Sound::Default => unreachable!(),
+                    Sound::Single(loopable_sound) => {
+                        xml_el.SetAttribute(
+                            h!("src"),
+                            &format!("ms-winsoundevent:Notification.Looping.{loopable_sound}")
+                                .into(),
+                        )?;
+                    }
+                    Sound::Loop(loopable_sound) => {
+                        xml_el.SetAttribute(
+                            h!("src"),
+                            &format!("ms-winsoundevent:Notification.Looping.{loopable_sound}")
+                                .into(),
+                        )?;
+                        xml_el.SetAttribute(h!("loop"), h!("true"))?;
+                    }
+                    _ => {
+                        xml_el.SetAttribute(
+                            h!("src"),
+                            &format!("ms-winsoundevent:Notification.{sound}").into(),
+                        )?;
+                    }
+                }
+                xml_el_toast.AppendChild(&xml_el)?;
+            }
+        } else {
+            let xml_el = xml_doc.CreateElement(h!("audio"))?;
+            xml_el.SetAttribute(h!("silent"), h!("true"))?;
+            xml_el_toast.AppendChild(&xml_el)?;
+        }
+
+        if !self.buttons.is_empty() {
+            let xml_el_actions = xml_doc.CreateElement(h!("actions"))?;
+            for button in &self.buttons {
+                let xml_el = xml_doc.CreateElement(h!("action"))?;
+                xml_el.SetAttribute(h!("content"), &HSTRING::from(&button.content))?;
+                xml_el.SetAttribute(h!("arguments"), &HSTRING::from(&button.action))?;
+            }
+            xml_el_toast.AppendChild(&xml_el_actions)?;
+        }
+
+        xml_doc.AppendChild(&xml_el_toast)?;
 
         // Create the toast
-        ToastNotification::CreateToastNotification(&toast_xml).map_err(Into::into)
+        ToastNotification::CreateToastNotification(&xml_doc).map_err(Into::into)
     }
 
     /// Update progress bar title, status, progress value, progress value string
@@ -670,13 +731,10 @@ impl Toast {
     /// ```
     pub fn set_progress(&self, progress: &Progress) -> Result<NotificationUpdateResult> {
         let map = StringMap::new()?;
-        map.Insert(&HSTRING::from("progressTitle"), &progress.title())?;
-        map.Insert(&HSTRING::from("progressStatus"), &progress.status())?;
-        map.Insert(&HSTRING::from("progressValue"), &progress.value())?;
-        map.Insert(
-            &HSTRING::from("progressValueString"),
-            &progress.value_string(),
-        )?;
+        map.Insert(h!("progressTitle"), &progress.title())?;
+        map.Insert(h!("progressStatus"), &progress.status())?;
+        map.Insert(h!("progressValue"), &progress.value())?;
+        map.Insert(h!("progressValueString"), &progress.value_string())?;
 
         let data = NotificationData::CreateNotificationDataWithValuesAndSequenceNumber(&map, 2)?;
 
@@ -706,13 +764,10 @@ impl Toast {
             toast_template.SetTag(&progress.tag())?;
 
             let map = StringMap::new()?;
-            map.Insert(&HSTRING::from("progressTitle"), &progress.title())?;
-            map.Insert(&HSTRING::from("progressStatus"), &progress.status())?;
-            map.Insert(&HSTRING::from("progressValue"), &progress.value())?;
-            map.Insert(
-                &HSTRING::from("progressValueString"),
-                &progress.value_string(),
-            )?;
+            map.Insert(h!("progressTitle"), &progress.title())?;
+            map.Insert(h!("progressStatus"), &progress.status())?;
+            map.Insert(h!("progressValue"), &progress.value())?;
+            map.Insert(h!("progressValueString"), &progress.value_string())?;
 
             let data =
                 NotificationData::CreateNotificationDataWithValuesAndSequenceNumber(&map, 1)?;
@@ -758,5 +813,69 @@ mod tests {
             .show()
             // silently consume errors
             .expect("notification failed");
+    }
+
+    #[test]
+    fn create_template_xml_simple() {
+        let expected = r#"<toast><visual><binding template="ToastGeneric"/></visual><audio silent="true"/></toast>"#;
+        let toast = Toast::new(Toast::POWERSHELL_APP_ID);
+        let template = toast.create_template().unwrap();
+        assert_eq!(
+            template
+                .Content()
+                .unwrap()
+                .GetXml()
+                .unwrap()
+                .to_string_lossy(),
+            expected
+        );
+    }
+
+    #[test]
+    fn create_template_xml_audio_loop() {
+        let expected = r#"<toast><visual><binding template="ToastGeneric"/></visual><progress src="ms-winsoundevent:Notification.Looping.Call" loop="true"/></toast>"#;
+        let toast =
+            Toast::new(Toast::POWERSHELL_APP_ID).sound(Some(Sound::Loop(LoopableSound::Call)));
+
+        let template = toast.create_template().unwrap();
+        assert_eq!(
+            template
+                .Content()
+                .unwrap()
+                .GetXml()
+                .unwrap()
+                .to_string_lossy(),
+            expected
+        );
+    }
+
+    #[test]
+    fn create_template_xml_full() {
+        let img1 = &Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/flower.jpeg");
+        let img2 = &Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/chick.jpeg");
+        let expected = format!(
+            r#"<toast duration="short"><visual><binding template="ToastGeneric"><image id="1" src="file:///{}" alt="flower" placement="Hero"/><image id="1" src="file:///{}" alt="chicken" placement="appLogoOverride" hint-crop="circle"/><text id="1">title</text><text id="2">line1</text><text id="3">line2</text></binding></visual><audio silent="true"/></toast>"#,
+            img1.display(),
+            img2.display()
+        );
+        let toast = Toast::new(Toast::POWERSHELL_APP_ID)
+            .hero(img1, "flower")
+            .icon(img2, IconCrop::Circular, "chicken")
+            .title("title")
+            .text1("line1")
+            .text2("line2")
+            .duration(Duration::Short)
+            .sound(None);
+
+        let template = toast.create_template().unwrap();
+        assert_eq!(
+            template
+                .Content()
+                .unwrap()
+                .GetXml()
+                .unwrap()
+                .to_string_lossy(),
+            expected
+        );
     }
 }
