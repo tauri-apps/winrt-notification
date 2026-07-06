@@ -590,6 +590,8 @@ impl Toast {
 
         for image in &self.images {
             let xml_el = xml_doc.CreateElement(h!("image"))?;
+            // This doesn't seem to be required. Also setting the same ID for all images sounds wrong but is kept to keep behavior unchanged.
+            // It may be required in Windows 8.
             xml_el.SetAttribute(h!("id"), h!("1"))?;
             xml_el.SetAttribute(
                 h!("src"),
@@ -811,5 +813,69 @@ mod tests {
             .show()
             // silently consume errors
             .expect("notification failed");
+    }
+
+    #[test]
+    fn create_template_xml_simple() {
+        let expected = r#"<toast><visual><binding template="ToastGeneric"/></visual><audio silent="true"/></toast>"#;
+        let toast = Toast::new(Toast::POWERSHELL_APP_ID);
+        let template = toast.create_template().unwrap();
+        assert_eq!(
+            template
+                .Content()
+                .unwrap()
+                .GetXml()
+                .unwrap()
+                .to_string_lossy(),
+            expected
+        );
+    }
+
+    #[test]
+    fn create_template_xml_audio_loop() {
+        let expected = r#"<toast><visual><binding template="ToastGeneric"/></visual><progress src="ms-winsoundevent:Notification.Looping.Call" loop="true"/></toast>"#;
+        let toast =
+            Toast::new(Toast::POWERSHELL_APP_ID).sound(Some(Sound::Loop(LoopableSound::Call)));
+
+        let template = toast.create_template().unwrap();
+        assert_eq!(
+            template
+                .Content()
+                .unwrap()
+                .GetXml()
+                .unwrap()
+                .to_string_lossy(),
+            expected
+        );
+    }
+
+    #[test]
+    fn create_template_xml_full() {
+        let img1 = &Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/flower.jpeg");
+        let img2 = &Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/chick.jpeg");
+        let expected = format!(
+            r#"<toast duration="short"><visual><binding template="ToastGeneric"><image id="1" src="file:///{}" alt="flower" placement="Hero"/><image id="1" src="file:///{}" alt="chicken" placement="appLogoOverride" hint-crop="circle"/><text id="1">title</text><text id="2">line1</text><text id="3">line2</text></binding></visual><audio silent="true"/></toast>"#,
+            img1.display(),
+            img2.display()
+        );
+        let toast = Toast::new(Toast::POWERSHELL_APP_ID)
+            .hero(img1, "flower")
+            .icon(img2, IconCrop::Circular, "chicken")
+            .title("title")
+            .text1("line1")
+            .text2("line2")
+            .duration(Duration::Short)
+            .sound(None);
+
+        let template = toast.create_template().unwrap();
+        assert_eq!(
+            template
+                .Content()
+                .unwrap()
+                .GetXml()
+                .unwrap()
+                .to_string_lossy(),
+            expected
+        );
     }
 }

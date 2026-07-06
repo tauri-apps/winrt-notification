@@ -12,7 +12,7 @@ fn main() {
     // c:/this/style/works/too/image.png
     // UNC paths, so paths starting with \\?\ are not supported.
     // Rust's canonicalize() function returns UNC paths so you want to use absolute() or the dunce crate instead.
-    let icon_path = absolute(Path::new("./examples/icon.png")).unwrap();
+    let icon_path = absolute(Path::new("./resources/tauri_large.png")).unwrap();
     Toast::new(Toast::POWERSHELL_APP_ID)
         .hero(&icon_path, "alt text")
         .icon(&icon_path, IconCrop::Circular, "alt text")
