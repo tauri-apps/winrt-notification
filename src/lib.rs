@@ -342,7 +342,7 @@ impl Toast {
             line1: None,
             line2: None,
             images: Vec::new(),
-            audio: None,
+            audio: Some(Sound::Default),
             app_id: app_id.to_string(),
             progress: None,
             scenario: None,
@@ -455,9 +455,9 @@ impl Toast {
         self
     }
 
-    /// Set the sound for the toast or silence it
+    /// Set the sound for the toast or `None` to silence it.
     ///
-    /// Default is [Sound::IM](enum.Sound.html)
+    /// Default is [Some(Sound::Default)](enum.Sound.html).
     pub fn sound(mut self, src: Option<Sound>) -> Toast {
         self.audio = src;
         self
@@ -646,7 +646,7 @@ impl Toast {
         // audio
         if let Some(sound) = self.audio {
             if sound != Sound::Default {
-                let xml_el = xml_doc.CreateElement(h!("progress"))?;
+                let xml_el = xml_doc.CreateElement(h!("audio"))?;
                 match sound {
                     Sound::Default => unreachable!(),
                     Sound::Single(loopable_sound) => {
@@ -685,6 +685,7 @@ impl Toast {
                 let xml_el = xml_doc.CreateElement(h!("action"))?;
                 xml_el.SetAttribute(h!("content"), &HSTRING::from(&button.content))?;
                 xml_el.SetAttribute(h!("arguments"), &HSTRING::from(&button.action))?;
+                xml_el_actions.AppendChild(&xml_el)?;
             }
             xml_el_toast.AppendChild(&xml_el_actions)?;
         }
