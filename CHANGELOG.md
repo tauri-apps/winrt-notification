@@ -1,5 +1,9 @@
 # Changelog
 
+## \[0.8.1]
+
+- [`31e18ea`](https://github.com/tauri-apps/winrt-notification/commit/31e18ea433a5c26f882335fb9556b82c726fa000) ([#60](https://github.com/tauri-apps/winrt-notification/pull/60) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Fixed an issue that caused audio and buttons to be missing since `0.8.0`.
+
 ## \[0.8.0]
 
 - [`da13f08`](https://github.com/tauri-apps/winrt-notification/commit/da13f080d96599cd8b5d5b99f0abffbb01e9081d) ([#56](https://github.com/tauri-apps/winrt-notification/pull/56) by [@FabianLars](https://github.com/tauri-apps/winrt-notification/../../FabianLars)) Raise MSRV to `1.82`.
