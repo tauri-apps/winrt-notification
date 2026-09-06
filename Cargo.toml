@@ -19,7 +19,7 @@ default-target = "x86_64-pc-windows-msvc"
 
 [dependencies]
 thiserror = "2"
-windows-version = "0.1"
+windows-version = "0.100"
 
   [dependencies.windows]
   version = "0.62"
@@ -32,4 +32,4 @@ windows-version = "0.1"
 ]
 
 [target.'cfg(windows)'.dev-dependencies]
-windows-registry = "0.6.0"
+windows-registry = "0.100.0"
